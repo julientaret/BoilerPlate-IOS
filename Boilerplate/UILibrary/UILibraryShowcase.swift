@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-/// Vue de démonstration de tous les composants de l'UI Library
-/// Utilisée pour tester et présenter les composants
+/// Demo view of all UI Library components
+/// Used to test and showcase components
 struct UILibraryShowcase: View {
     
     @State private var showModal = false
