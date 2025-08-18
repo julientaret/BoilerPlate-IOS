@@ -100,12 +100,12 @@ extension UIBackground {
     
     /// Fond primaire de l'application
     static var primary: UIBackground {
-        UIBackground(type: .solid(UITheme.Colors.background))
+        UIBackground(type: .solid(Color(.systemBackground)))
     }
     
     /// Fond secondaire de l'application
     static var secondary: UIBackground {
-        UIBackground(type: .solid(UITheme.Colors.surface))
+        UIBackground(type: .solid(Color(.secondarySystemBackground)))
     }
     
     /// Dégradé bleu-violet
@@ -205,7 +205,7 @@ extension UIBackground {
             
             Text("Primary Background")
                 .font(UITheme.Typography.title1)
-                .foregroundColor(UITheme.Colors.textPrimary)
+                .foregroundColor(Color(.label))
         }
         .frame(height: 150)
     }

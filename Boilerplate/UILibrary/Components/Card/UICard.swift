@@ -102,11 +102,11 @@ struct UICard<Content: View>: View {
     private var backgroundColor: Color {
         switch style {
         case .elevated:
-            return UITheme.Colors.surface
+            return Color(.secondarySystemBackground)
         case .outlined:
-            return UITheme.Colors.background
+            return Color(.systemBackground)
         case .filled:
-            return UITheme.Colors.surface
+            return Color(.secondarySystemBackground)
         }
     }
     
@@ -117,7 +117,7 @@ struct UICard<Content: View>: View {
             EmptyView()
         case .outlined:
             RoundedRectangle(cornerRadius: cornerRadius)
-                .stroke(UITheme.Colors.outline, lineWidth: 1)
+                .stroke(Color(.separator), lineWidth: 1)
         }
     }
     
@@ -164,11 +164,11 @@ struct UICard<Content: View>: View {
             VStack(alignment: .leading, spacing: UITheme.Spacing.sm) {
                 Text("Carte Élevée")
                     .font(UITheme.Typography.headline)
-                    .foregroundColor(UITheme.Colors.textPrimary)
+                    .foregroundColor(Color(.label))
                 
                 Text("Ceci est une carte avec une ombre pour créer un effet d'élévation.")
                     .font(UITheme.Typography.body)
-                    .foregroundColor(UITheme.Colors.textSecondary)
+                    .foregroundColor(Color(.secondaryLabel))
             }
         }
         
@@ -180,11 +180,11 @@ struct UICard<Content: View>: View {
                 VStack(alignment: .leading) {
                     Text("Carte avec Bordure")
                         .font(UITheme.Typography.headline)
-                        .foregroundColor(UITheme.Colors.textPrimary)
+                        .foregroundColor(Color(.label))
                     
                     Text("Carte cliquable avec bordure")
                         .font(UITheme.Typography.caption)
-                        .foregroundColor(UITheme.Colors.textSecondary)
+                        .foregroundColor(Color(.secondaryLabel))
                 }
                 
                 Spacer()
@@ -196,11 +196,11 @@ struct UICard<Content: View>: View {
                 VStack(alignment: .leading, spacing: UITheme.Spacing.xs) {
                     Text("Carte Remplie")
                         .font(UITheme.Typography.title3)
-                        .foregroundColor(UITheme.Colors.textPrimary)
+                        .foregroundColor(Color(.label))
                     
                     Text("Style avec fond coloré")
                         .font(UITheme.Typography.body)
-                        .foregroundColor(UITheme.Colors.textSecondary)
+                        .foregroundColor(Color(.secondaryLabel))
                 }
                 
                 Spacer()

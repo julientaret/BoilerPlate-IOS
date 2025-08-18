@@ -53,14 +53,3 @@ Core/
 Le projet compile et fonctionne sur :
 - iPhone 16 Simulator (iOS 18.5)
 - Architecture arm64
-
-## 🔄 Prochaines étapes
-
-- [ ] Ajout d'autres services (Authentication, Network, etc.)
-- [ ] Configuration des tests unitaires
-- [ ] Implémentation de la navigation
-- [ ] Ajout des constantes de style (couleurs, polices)
-
----
-
-*Généré avec Swift et SwiftUI - Architecture services modulaire*

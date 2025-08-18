@@ -77,7 +77,7 @@ struct UILoadingIndicator: View {
     init(
         style: UILoadingStyle = .circular,
         size: UILoadingSize = .medium,
-        color: Color = UITheme.Colors.primary,
+        color: Color = .blue,
         message: String? = nil
     ) {
         self.style = style
@@ -94,7 +94,7 @@ struct UILoadingIndicator: View {
             if let message = message {
                 Text(message)
                     .font(UITheme.Typography.body)
-                    .foregroundColor(UITheme.Colors.textSecondary)
+                    .foregroundColor(Color(.secondaryLabel))
                     .multilineTextAlignment(.center)
             }
         }
@@ -233,7 +233,7 @@ struct UIFullScreenLoading: View {
     init(
         message: String? = "Chargement...",
         style: UILoadingStyle = .circular,
-        backgroundColor: Color = UITheme.Colors.background.opacity(0.8)
+        backgroundColor: Color = Color(.systemBackground).opacity(0.8)
     ) {
         self.message = message
         self.style = style
@@ -269,7 +269,7 @@ struct UIFullScreenLoading: View {
                 Text("Contenu en cours de chargement")
                     .font(UITheme.Typography.headline)
                 
-                UILoadingIndicator(style: .dots, size: .small, color: UITheme.Colors.primary)
+                UILoadingIndicator(style: .dots, size: .small, color: .blue)
             }
         }
     }

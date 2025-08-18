@@ -142,7 +142,7 @@ struct UIModal<Content: View>: View {
                 content
                     .padding(UITheme.Spacing.md)
             }
-            .background(UITheme.Colors.surface)
+            .background(Color(.secondarySystemBackground))
             .cornerRadius(UITheme.CornerRadius.large, corners: [.topLeft, .topRight])
             .offset(y: contentOffset)
         }
@@ -159,12 +159,12 @@ struct UIModal<Content: View>: View {
         VStack(spacing: 0) {
             if let title = title {
                 headerView(title: title)
-                    .background(UITheme.Colors.surface)
+                    .background(Color(.secondarySystemBackground))
             }
             
             content
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(UITheme.Colors.background)
+                .background(Color(.systemBackground))
         }
         .ignoresSafeArea()
     }
@@ -181,7 +181,7 @@ struct UIModal<Content: View>: View {
         }
         .frame(maxWidth: size.width)
         .frame(maxHeight: size.maxHeight)
-        .background(UITheme.Colors.surface)
+        .background(Color(.secondarySystemBackground))
         .cornerRadius(UITheme.CornerRadius.large)
         .shadow(
             color: UITheme.Shadow.large.color,
@@ -198,7 +198,7 @@ struct UIModal<Content: View>: View {
         HStack {
             Text(title)
                 .font(UITheme.Typography.headline)
-                .foregroundColor(UITheme.Colors.textPrimary)
+                .foregroundColor(Color(.label))
             
             Spacer()
             
@@ -206,7 +206,7 @@ struct UIModal<Content: View>: View {
                 Button(action: dismiss) {
                     Image(systemName: "xmark.circle.fill")
                         .font(.title2)
-                        .foregroundColor(UITheme.Colors.textSecondary)
+                        .foregroundColor(Color(.secondaryLabel))
                 }
             }
         }

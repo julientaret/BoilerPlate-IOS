@@ -160,7 +160,7 @@ struct UITextField: View {
             } else if let helperText = helperText {
                 Text(helperText)
                     .font(UITheme.Typography.caption)
-                    .foregroundColor(UITheme.Colors.textSecondary)
+                    .foregroundColor(Color(.secondaryLabel))
             }
         }
         .animation(UITheme.Animation.fast, value: isFocused)
@@ -200,9 +200,9 @@ struct UITextField: View {
     private var backgroundColor: Color {
         switch style {
         case .outlined:
-            return UITheme.Colors.background
+            return Color(.systemBackground)
         case .filled:
-            return UITheme.Colors.surface
+            return Color(.secondarySystemBackground)
         case .underlined:
             return Color.clear
         }
@@ -211,13 +211,13 @@ struct UITextField: View {
     private var borderColor: Color {
         switch currentState {
         case .normal:
-            return UITheme.Colors.outline
+            return Color(.separator)
         case .focused:
-            return UITheme.Colors.primary
+            return .blue
         case .error:
             return UITheme.Colors.error
         case .disabled:
-            return UITheme.Colors.outline.opacity(0.5)
+            return Color(.separator).opacity(0.5)
         }
     }
     
@@ -226,14 +226,14 @@ struct UITextField: View {
         case .error:
             return UITheme.Colors.error
         case .focused:
-            return UITheme.Colors.primary
+            return .blue
         default:
-            return UITheme.Colors.textSecondary
+            return Color(.secondaryLabel)
         }
     }
     
     private var textColor: Color {
-        isDisabled ? UITheme.Colors.textSecondary : UITheme.Colors.textPrimary
+        isDisabled ? Color(.secondaryLabel) : Color(.label)
     }
     
     private var iconColor: Color {
@@ -241,9 +241,9 @@ struct UITextField: View {
         case .error:
             return UITheme.Colors.error
         case .focused:
-            return UITheme.Colors.primary
+            return .blue
         default:
-            return UITheme.Colors.textSecondary
+            return Color(.secondaryLabel)
         }
     }
     

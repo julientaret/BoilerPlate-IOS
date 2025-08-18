@@ -156,7 +156,7 @@ struct UIButton: View {
     private var backgroundColor: Color {
         switch style {
         case .primary:
-            return UITheme.Colors.primary
+            return .blue
         case .secondary:
             return Color.clear
         case .tertiary:
@@ -171,9 +171,9 @@ struct UIButton: View {
         case .primary:
             return .white
         case .secondary:
-            return UITheme.Colors.primary
+            return .blue
         case .tertiary:
-            return UITheme.Colors.textPrimary
+            return Color(.label)
         case .destructive:
             return .white
         }
@@ -184,9 +184,9 @@ struct UIButton: View {
         case .primary, .destructive:
             return Color.clear
         case .secondary:
-            return UITheme.Colors.primary
+            return .blue
         case .tertiary:
-            return UITheme.Colors.outline
+            return Color(.separator)
         }
     }
     

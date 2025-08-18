@@ -188,7 +188,7 @@ struct UILibraryShowcase: View {
         VStack(alignment: .leading, spacing: UITheme.Spacing.md) {
             Text(title)
                 .font(UITheme.Typography.title2)
-                .foregroundColor(UITheme.Colors.textPrimary)
+                .foregroundColor(Color(.label))
             
             content()
         }
@@ -199,11 +199,11 @@ struct UILibraryShowcase: View {
         VStack(alignment: .leading, spacing: UITheme.Spacing.xs) {
             Text(title)
                 .font(UITheme.Typography.headline)
-                .foregroundColor(UITheme.Colors.textPrimary)
+                .foregroundColor(Color(.label))
             
             Text(description)
                 .font(UITheme.Typography.body)
-                .foregroundColor(UITheme.Colors.textSecondary)
+                .foregroundColor(Color(.secondaryLabel))
         }
     }
     

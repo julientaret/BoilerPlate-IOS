@@ -131,9 +131,9 @@ struct UIBadge: View {
         
         switch style {
         case .primary:
-            return UITheme.Colors.primary
+            return .blue
         case .secondary:
-            return UITheme.Colors.secondary
+            return .orange
         case .success:
             return UITheme.Colors.success
         case .warning:
@@ -143,7 +143,7 @@ struct UIBadge: View {
         case .info:
             return UITheme.Colors.info
         case .neutral:
-            return UITheme.Colors.outline.opacity(0.2)
+            return Color(.separator).opacity(0.2)
         }
     }
     
@@ -151,9 +151,9 @@ struct UIBadge: View {
         if isOutlined {
             switch style {
             case .primary:
-                return UITheme.Colors.primary
+                return .blue
             case .secondary:
-                return UITheme.Colors.secondary
+                return .orange
             case .success:
                 return UITheme.Colors.success
             case .warning:
@@ -163,7 +163,7 @@ struct UIBadge: View {
             case .info:
                 return UITheme.Colors.info
             case .neutral:
-                return UITheme.Colors.textPrimary
+                return Color(.label)
             }
         }
         
@@ -173,7 +173,7 @@ struct UIBadge: View {
         case .warning:
             return .black
         case .neutral:
-            return UITheme.Colors.textPrimary
+            return Color(.label)
         }
     }
     
@@ -188,9 +188,9 @@ struct UIBadge: View {
     private var borderColor: Color {
         switch style {
         case .primary:
-            return UITheme.Colors.primary
+            return .blue
         case .secondary:
-            return UITheme.Colors.secondary
+            return .orange
         case .success:
             return UITheme.Colors.success
         case .warning:
@@ -200,7 +200,7 @@ struct UIBadge: View {
         case .info:
             return UITheme.Colors.info
         case .neutral:
-            return UITheme.Colors.outline
+            return Color(.separator)
         }
     }
     

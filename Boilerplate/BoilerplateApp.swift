@@ -10,6 +10,7 @@ import SwiftUI
 @main
 struct BoilerplateApp: App {
     @StateObject private var coordinator = AppCoordinator()
+    @StateObject private var themeManager = ThemeManager()
     
     var body: some Scene {
         WindowGroup {
@@ -23,8 +24,14 @@ struct BoilerplateApp: App {
                         .transition(.opacity)
                 }
             }
+            .background(UITheme.Colors.background(for: themeManager.isDarkMode))
+            .preferredColorScheme(themeManager.currentMode == .system ? nil : (themeManager.isDarkMode ? .dark : .light))
+            .environmentObject(themeManager)
             .onAppear {
                 coordinator.dismissSplash()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+                themeManager.updateForSystemChange()
             }
         }
     }
