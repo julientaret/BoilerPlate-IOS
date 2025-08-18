@@ -23,7 +23,7 @@ struct BoilerplateApp: App {
                 } else {
                     ContentView()
                         .transition(.opacity)
-                        .localizedRoot() // Rerender complet lors du changement de langue
+                        .localizedRoot() // Complete rerender on language change
                 }
             }
             .background(UITheme.Colors.background(for: themeManager.isDarkMode))

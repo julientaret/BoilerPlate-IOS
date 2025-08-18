@@ -7,20 +7,20 @@
 
 import SwiftUI
 
-/// Style d'affichage de la modal
-/// - sheet: Modal en bas de l'écran (sheet iOS)
-/// - fullScreen: Modal plein écran
-/// - center: Modal centrée avec overlay
+/// Modal display style
+/// - sheet: Modal at bottom of screen (iOS sheet)
+/// - fullScreen: Full screen modal
+/// - center: Centered modal with overlay
 enum UIModalPresentationStyle {
     case sheet
     case fullScreen
     case center
 }
 
-/// Taille de modal pour le style center
-/// - small: Modal compacte
-/// - medium: Taille standard
-/// - large: Modal étendue
+/// Modal size for center style
+/// - small: Compact modal
+/// - medium: Standard size
+/// - large: Extended modal
 enum UIModalSize {
     case small
     case medium
@@ -43,7 +43,7 @@ enum UIModalSize {
     }
 }
 
-/// Composant Modal réutilisable et customisable
+/// Reusable and customizable Modal component
 /// 
 /// Exemple d'utilisation :
 /// ```swift
@@ -53,7 +53,7 @@ enum UIModalSize {
 ///     style: .center,
 ///     size: .medium
 /// ) {
-///     Text("Contenu de la modal")
+///     Text("Modal content")
 /// }
 /// ```
 struct UIModal<Content: View>: View {
@@ -70,14 +70,14 @@ struct UIModal<Content: View>: View {
     @State private var contentOffset: CGFloat = 0
     
     // MARK: - Initializer
-    /// Initialise une nouvelle modal
+    /// Initialize a new modal
     /// - Parameters:
-    ///   - isPresented: Binding pour contrôler l'affichage
-    ///   - title: Titre de la modal (optionnel)
-    ///   - style: Style de présentation
-    ///   - size: Taille de la modal (pour style center)
-    ///   - showCloseButton: Affiche le bouton de fermeture
-    ///   - content: Contenu de la modal
+    ///   - isPresented: Binding to control display
+    ///   - title: Modal title (optional)
+    ///   - style: Presentation style
+    ///   - size: Modal size (for center style)
+    ///   - showCloseButton: Shows close button
+///   - content: Modal content
     init(
         isPresented: Binding<Bool>,
         title: String? = nil,

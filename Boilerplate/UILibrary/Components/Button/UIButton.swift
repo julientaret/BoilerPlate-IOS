@@ -7,11 +7,11 @@
 
 import SwiftUI
 
-/// Style de bouton disponible dans l'UI Library
-/// - primary: Style principal avec fond coloré
-/// - secondary: Style secondaire avec contour
-/// - tertiary: Style tertiaire transparent
-/// - destructive: Style pour actions destructives
+/// Available button style in UI Library
+/// - primary: Main style with colored background
+/// - secondary: Secondary style with outline
+/// - tertiary: Transparent tertiary style
+/// - destructive: Style for destructive actions
 enum UIButtonStyle {
     case primary
     case secondary 
@@ -19,10 +19,10 @@ enum UIButtonStyle {
     case destructive
 }
 
-/// Taille de bouton disponible
-/// - small: Bouton compact
-/// - medium: Taille standard
-/// - large: Bouton proéminent
+/// Available button size
+/// - small: Compact button
+/// - medium: Standard size
+/// - large: Prominent button
 enum UIButtonSize {
     case small
     case medium
@@ -53,7 +53,7 @@ enum UIButtonSize {
     }
 }
 
-/// Composant Button réutilisable et customisable
+/// Reusable and customizable Button component
 /// 
 /// Exemple d'utilisation :
 /// ```swift
@@ -63,7 +63,7 @@ enum UIButtonSize {
 ///     size: .medium,
 ///     isLoading: false
 /// ) {
-///     // Action du bouton
+///     // Button action
 /// }
 /// ```
 struct UIButton: View {
@@ -80,15 +80,15 @@ struct UIButton: View {
     @State private var isPressed = false
     
     // MARK: - Initializer
-    /// Initialise un nouveau bouton
+    /// Initialize a new button
     /// - Parameters:
-    ///   - title: Texte affiché sur le bouton
-    ///   - style: Style visuel du bouton
-    ///   - size: Taille du bouton
-    ///   - isLoading: Affiche un indicateur de chargement
-    ///   - isDisabled: Désactive le bouton
-    ///   - icon: Nom de l'icône SF Symbols (optionnel)
-    ///   - action: Action exécutée lors du tap
+    ///   - title: Text displayed on the button
+    ///   - style: Visual style of the button
+///   - size: Button size
+    ///   - isLoading: Shows loading indicator
+    ///   - isDisabled: Disables the button
+    ///   - icon: SF Symbols icon name (optional)
+///   - action: Action executed on tap
     init(
         title: String,
         style: UIButtonStyle = .primary,

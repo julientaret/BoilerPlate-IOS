@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-/// Configuration globale du thème de l'application
-/// Centralise toutes les couleurs, polices, espacements et autres propriétés visuelles
+/// Global application theme configuration
+/// Centralizes all colors, fonts, spacing and other visual properties
 struct UITheme {
     
     // MARK: - Colors

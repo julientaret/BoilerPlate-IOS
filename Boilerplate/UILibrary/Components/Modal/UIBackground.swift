@@ -7,11 +7,11 @@
 
 import SwiftUI
 
-/// Type de fond d'écran disponible
+/// Available background type
 /// - solid: Couleur unie
-/// - gradient: Dégradé linéaire
-/// - radialGradient: Dégradé radial
-/// - image: Image de fond
+/// - gradient: Linear gradient
+/// - radialGradient: Radial gradient
+/// - image: Background image
 enum UIBackgroundType {
     case solid(Color)
     case gradient(colors: [Color], startPoint: UnitPoint = .topLeading, endPoint: UnitPoint = .bottomTrailing)
@@ -19,7 +19,7 @@ enum UIBackgroundType {
     case image(String, contentMode: ContentMode = .fill)
 }
 
-/// Composant Background réutilisable et customisable
+/// Reusable and customizable Background component
 /// 
 /// Exemple d'utilisation :
 /// ```swift
@@ -38,12 +38,12 @@ struct UIBackground: View {
     let ignoresSafeArea: Bool
     
     // MARK: - Initializer
-    /// Initialise un nouveau fond d'écran
+    /// Initialize a new background
     /// - Parameters:
-    ///   - type: Type de fond
-    ///   - opacity: Opacité (0.0 à 1.0)
+    ///   - type: Background type
+    ///   - opacity: Opacity (0.0 to 1.0)
     ///   - blur: Rayon de flou
-    ///   - ignoresSafeArea: Ignore les zones sécurisées
+    ///   - ignoresSafeArea: Ignores safe areas
     init(
         type: UIBackgroundType,
         opacity: Double = 1.0,
@@ -98,17 +98,17 @@ struct UIBackground: View {
 // MARK: - Predefined Backgrounds
 extension UIBackground {
     
-    /// Fond primaire de l'application
+            /// Primary application background
     static var primary: UIBackground {
         UIBackground(type: .solid(Color(.systemBackground)))
     }
     
-    /// Fond secondaire de l'application
+            /// Secondary application background
     static var secondary: UIBackground {
         UIBackground(type: .solid(Color(.secondarySystemBackground)))
     }
     
-    /// Dégradé bleu-violet
+            /// Blue-violet gradient
     static var blueGradient: UIBackground {
         UIBackground(
             type: .gradient(
@@ -119,7 +119,7 @@ extension UIBackground {
         )
     }
     
-    /// Dégradé orange-rose
+            /// Orange-pink gradient
     static var sunsetGradient: UIBackground {
         UIBackground(
             type: .gradient(
@@ -130,7 +130,7 @@ extension UIBackground {
         )
     }
     
-    /// Dégradé vert
+            /// Green gradient
     static var greenGradient: UIBackground {
         UIBackground(
             type: .gradient(
@@ -141,7 +141,7 @@ extension UIBackground {
         )
     }
     
-    /// Dégradé radial central
+            /// Central radial gradient
     static var radialBlue: UIBackground {
         UIBackground(
             type: .radialGradient(
@@ -153,7 +153,7 @@ extension UIBackground {
         )
     }
     
-    /// Fond transparent avec overlay sombre
+            /// Transparent background with dark overlay
     static var overlay: UIBackground {
         UIBackground(
             type: .solid(Color.black),

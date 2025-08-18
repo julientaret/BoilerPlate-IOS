@@ -7,11 +7,11 @@
 
 import SwiftUI
 
-/// Style d'indicateur de chargement
-/// - circular: Indicateur circulaire standard
-/// - dots: Animation avec points
-/// - pulse: Animation de pulsation
-/// - skeleton: Style skeleton loading
+/// Loading indicator style
+/// - circular: Standard circular indicator
+/// - dots: Dots animation
+/// - pulse: Pulse animation
+/// - skeleton: Skeleton loading style
 enum UILoadingStyle {
     case circular
     case dots
@@ -19,10 +19,10 @@ enum UILoadingStyle {
     case skeleton
 }
 
-/// Taille d'indicateur de chargement
-/// - small: Indicateur compact
-/// - medium: Taille standard
-/// - large: Indicateur proéminent
+/// Loading indicator size
+/// - small: Compact indicator
+/// - medium: Standard size
+/// - large: Prominent indicator
 enum UILoadingSize {
     case small
     case medium
@@ -45,7 +45,7 @@ enum UILoadingSize {
     }
 }
 
-/// Composant Loading Indicator réutilisable et customisable
+/// Reusable and customizable Loading Indicator component
 /// 
 /// Exemple d'utilisation :
 /// ```swift
@@ -53,7 +53,7 @@ enum UILoadingSize {
 ///     style: .circular,
 ///     size: .medium,
 ///     color: .blue,
-///     message: "Chargement..."
+///     message: "Loading..."
 /// )
 /// ```
 struct UILoadingIndicator: View {
@@ -68,12 +68,12 @@ struct UILoadingIndicator: View {
     @State private var dotAnimation = [false, false, false]
     
     // MARK: - Initializer
-    /// Initialise un nouvel indicateur de chargement
+    /// Initialize a new loading indicator
     /// - Parameters:
-    ///   - style: Style de l'indicateur
-    ///   - size: Taille de l'indicateur
-    ///   - color: Couleur de l'indicateur
-    ///   - message: Message de chargement (optionnel)
+    ///   - style: Indicator style
+///   - size: Indicator size
+    ///   - color: Indicator color
+///   - message: Loading message (optional)
     init(
         style: UILoadingStyle = .circular,
         size: UILoadingSize = .medium,
@@ -231,7 +231,7 @@ struct UIFullScreenLoading: View {
     let backgroundColor: Color
     
     init(
-        message: String? = "Chargement...",
+        message: String? = "Loading...",
         style: UILoadingStyle = .circular,
         backgroundColor: Color = Color(.systemBackground).opacity(0.8)
     ) {
@@ -256,7 +256,7 @@ struct UIFullScreenLoading: View {
 
 #Preview {
     VStack(spacing: UITheme.Spacing.xl) {
-        UILoadingIndicator(style: .circular, size: .small, message: "Chargement...")
+        UILoadingIndicator(style: .circular, size: .small, message: "Loading...")
         
         UILoadingIndicator(style: .dots, size: .medium, color: .orange)
         
@@ -266,7 +266,7 @@ struct UIFullScreenLoading: View {
         
         UICard {
             VStack(spacing: UITheme.Spacing.md) {
-                Text("Contenu en cours de chargement")
+                Text("Content loading...")
                     .font(UITheme.Typography.headline)
                 
                 UILoadingIndicator(style: .dots, size: .small, color: .blue)

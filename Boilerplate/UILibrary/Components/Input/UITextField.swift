@@ -7,21 +7,21 @@
 
 import SwiftUI
 
-/// Style de champ de texte
-/// - outlined: Style avec bordure
-/// - filled: Style avec fond coloré
-/// - underlined: Style avec ligne en bas
+/// Text field style
+/// - outlined: Style with border
+/// - filled: Style with colored background
+/// - underlined: Style with bottom line
 enum UITextFieldStyle {
     case outlined
     case filled
     case underlined
 }
 
-/// État du champ de texte
-/// - normal: État normal
-/// - focused: État focus
-/// - error: État d'erreur
-/// - disabled: État désactivé
+/// Text field state
+/// - normal: Normal state
+/// - focused: Focused state
+/// - error: Error state
+/// - disabled: Disabled state
 enum UITextFieldState {
     case normal
     case focused
@@ -29,7 +29,7 @@ enum UITextFieldState {
     case disabled
 }
 
-/// Composant TextField réutilisable et customisable
+/// Reusable and customizable TextField component
 /// 
 /// Exemple d'utilisation :
 /// ```swift
@@ -63,21 +63,21 @@ struct UITextField: View {
     @FocusState private var isFocused: Bool
     
     // MARK: - Initializer
-    /// Initialise un nouveau champ de texte
+    /// Initialize a new text field
     /// - Parameters:
     ///   - text: Binding du texte
     ///   - placeholder: Texte de placeholder
-    ///   - label: Label au-dessus du champ
-    ///   - style: Style visuel du champ
+    ///   - label: Label above the field
+///   - style: Visual style of the field
     ///   - keyboardType: Type de clavier
-    ///   - isSecure: Champ sécurisé (mot de passe)
-    ///   - isDisabled: Champ désactivé
+    ///   - isSecure: Secure field (password)
+///   - isDisabled: Disabled field
     ///   - errorMessage: Message d'erreur
     ///   - helperText: Texte d'aide
     ///   - maxLength: Longueur maximale
-    ///   - leadingIcon: Icône à gauche
-    ///   - trailingIcon: Icône à droite
-    ///   - onTrailingIconTap: Action sur l'icône de droite
+    ///   - leadingIcon: Left icon
+///   - trailingIcon: Right icon
+///   - onTrailingIconTap: Action on right icon
     init(
         text: Binding<String>,
         placeholder: String = "",

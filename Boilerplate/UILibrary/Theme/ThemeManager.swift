@@ -48,16 +48,16 @@ class ThemeManager: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     
     init() {
-        // Charger le thème sauvegardé
+        // Load saved theme
         if let savedTheme = UserDefaults.standard.string(forKey: "theme_mode"),
            let themeMode = ThemeMode(rawValue: savedTheme) {
             currentMode = themeMode
         }
         
-        // Mettre à jour immédiatement
+        // Update immediately
         updateIsDarkMode()
         
-        // Écouter les changements de colorScheme
+        // Listen to colorScheme changes
         NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)
             .sink { [weak self] _ in
                 self?.updateForSystemChange()

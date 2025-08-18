@@ -7,14 +7,14 @@
 
 import SwiftUI
 
-/// Style de badge disponible
-/// - primary: Badge principal
-/// - secondary: Badge secondaire
-/// - success: Badge de succès
-/// - warning: Badge d'avertissement
-/// - error: Badge d'erreur
-/// - info: Badge d'information
-/// - neutral: Badge neutre
+/// Available badge style
+/// - primary: Primary badge
+/// - secondary: Secondary badge
+/// - success: Success badge
+/// - warning: Warning badge
+/// - error: Error badge
+/// - info: Information badge
+/// - neutral: Neutral badge
 enum UIBadgeStyle {
     case primary
     case secondary
@@ -25,10 +25,10 @@ enum UIBadgeStyle {
     case neutral
 }
 
-/// Taille de badge disponible
-/// - small: Badge compact
-/// - medium: Taille standard
-/// - large: Badge proéminent
+/// Available badge size
+/// - small: Compact badge
+/// - medium: Standard size
+/// - large: Prominent badge
 enum UIBadgeSize {
     case small
     case medium
@@ -59,7 +59,7 @@ enum UIBadgeSize {
     }
 }
 
-/// Composant Badge réutilisable et customisable
+/// Reusable and customizable Badge component
 /// 
 /// Exemple d'utilisation :
 /// ```swift
@@ -80,13 +80,13 @@ struct UIBadge: View {
     let isOutlined: Bool
     
     // MARK: - Initializer
-    /// Initialise un nouveau badge
+    /// Initialize a new badge
     /// - Parameters:
-    ///   - text: Texte affiché dans le badge
-    ///   - style: Style visuel du badge
-    ///   - size: Taille du badge
-    ///   - icon: Icône SF Symbols (optionnel)
-    ///   - isOutlined: Style avec bordure seulement
+    ///   - text: Text displayed in the badge
+    ///   - style: Visual style of the badge
+///   - size: Badge size
+    ///   - icon: SF Symbols icon (optional)
+    ///   - isOutlined: Style with border only
     init(
         text: String,
         style: UIBadgeStyle = .primary,
@@ -219,32 +219,32 @@ struct UIBadge: View {
 // MARK: - Predefined Badges
 extension UIBadge {
     
-    /// Badge de notification (point rouge)
+    /// Notification badge (red dot)
     static var notification: UIBadge {
         UIBadge(text: "", style: .error, size: .small)
     }
     
-    /// Badge nouveau
+    /// New badge
     static var new: UIBadge {
         UIBadge(text: "Nouveau", style: .success, size: .small)
     }
     
-    /// Badge populaire
+    /// Popular badge
     static var popular: UIBadge {
         UIBadge(text: "Populaire", style: .warning, size: .small, icon: "star.fill")
     }
     
-    /// Badge premium
+    /// Premium badge
     static var premium: UIBadge {
         UIBadge(text: "Premium", style: .primary, size: .medium, icon: "crown.fill")
     }
     
-    /// Badge en ligne
+    /// Online badge
     static var online: UIBadge {
         UIBadge(text: "En ligne", style: .success, size: .small, icon: "circle.fill")
     }
     
-    /// Badge hors ligne
+    /// Offline badge
     static var offline: UIBadge {
         UIBadge(text: "Hors ligne", style: .neutral, size: .small, icon: "circle")
     }
@@ -252,7 +252,7 @@ extension UIBadge {
 
 #Preview {
     VStack(spacing: UITheme.Spacing.lg) {
-        // Styles différents
+        // Different styles
         HStack(spacing: UITheme.Spacing.sm) {
             UIBadge(text: "Primary", style: .primary)
             UIBadge(text: "Secondary", style: .secondary)
@@ -265,28 +265,28 @@ extension UIBadge {
             UIBadge(text: "Info", style: .info)
         }
         
-        // Avec icônes
+        // With icons
         HStack(spacing: UITheme.Spacing.sm) {
             UIBadge(text: "Vérifié", style: .success, icon: "checkmark.circle.fill")
             UIBadge(text: "Favori", style: .warning, icon: "heart.fill")
             UIBadge(text: "Nouveau", style: .primary, icon: "sparkles")
         }
         
-        // Tailles différentes
+        // Different sizes
         HStack(spacing: UITheme.Spacing.sm) {
             UIBadge(text: "Small", style: .primary, size: .small)
             UIBadge(text: "Medium", style: .primary, size: .medium)
             UIBadge(text: "Large", style: .primary, size: .large)
         }
         
-        // Style outlined
+        // Outlined style
         HStack(spacing: UITheme.Spacing.sm) {
             UIBadge(text: "Outlined", style: .primary, isOutlined: true)
             UIBadge(text: "Success", style: .success, icon: "checkmark", isOutlined: true)
             UIBadge(text: "Error", style: .error, isOutlined: true)
         }
         
-        // Badges prédéfinis
+        // Predefined badges
         HStack(spacing: UITheme.Spacing.sm) {
             UIBadge.new
             UIBadge.popular

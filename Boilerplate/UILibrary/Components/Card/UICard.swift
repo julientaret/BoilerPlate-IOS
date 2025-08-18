@@ -7,17 +7,17 @@
 
 import SwiftUI
 
-/// Style de carte disponible
-/// - elevated: Carte avec ombre élevée
-/// - outlined: Carte avec bordure
-/// - filled: Carte avec fond coloré
+/// Available card style
+/// - elevated: Card with elevated shadow
+/// - outlined: Card with border
+/// - filled: Card with colored background
 enum UICardStyle {
     case elevated
     case outlined
     case filled
 }
 
-/// Composant Card réutilisable et customisable
+/// Reusable and customizable Card component
 /// 
 /// Exemple d'utilisation :
 /// ```swift
@@ -44,13 +44,13 @@ struct UICard<Content: View>: View {
     @State private var isPressed = false
     
     // MARK: - Initializer
-    /// Initialise une nouvelle carte
+    /// Initialize a new card
     /// - Parameters:
-    ///   - style: Style visuel de la carte
+    ///   - style: Visual style of the card
     ///   - padding: Espacement interne
     ///   - cornerRadius: Rayon des coins
     ///   - onTap: Action lors du tap (optionnel)
-    ///   - content: Contenu de la carte
+    ///   - content: Card content
     init(
         style: UICardStyle = .elevated,
         padding: CGFloat = UITheme.Spacing.md,

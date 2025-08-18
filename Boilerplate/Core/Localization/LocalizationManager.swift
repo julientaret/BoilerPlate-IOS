@@ -41,23 +41,23 @@ class LocalizationManager: ObservableObject {
         didSet {
             UserDefaults.standard.set(currentLanguage.rawValue, forKey: "selected_language")
             loadLocalizations()
-            // Force UI update immédiatement
+            // Force immediate UI update
             forceUIUpdate()
         }
     }
     
-    // Propriété pour forcer le rerender de l'UI
+            // Property to force UI rerender
     @Published private(set) var uiUpdateTrigger: UUID = UUID()
     
     private var localizations: [String: [String: String]] = [:]
     
     init() {
-        // Charger la langue sauvegardée ou détecter la langue système
+        // Load saved language or detect system language
         if let savedLanguage = UserDefaults.standard.string(forKey: "selected_language"),
            let language = SupportedLanguage(rawValue: savedLanguage) {
             currentLanguage = language
         } else {
-            // Détecter la langue système
+            // Detect system language
             let systemLanguage = Locale.current.language.languageCode?.identifier ?? "fr"
             currentLanguage = SupportedLanguage(rawValue: systemLanguage) ?? .french
         }
@@ -66,7 +66,7 @@ class LocalizationManager: ObservableObject {
     }
     
     func setLanguage(_ language: SupportedLanguage) {
-        // Animation fluide pour le changement de langue
+        // Smooth animation for language change
         withAnimation(.easeInOut(duration: 0.3)) {
             currentLanguage = language
         }
@@ -80,7 +80,7 @@ class LocalizationManager: ObservableObject {
     }
     
     private func loadLocalizations() {
-        // Charger toutes les localisations pour la langue courante
+        // Load all localizations for current language
         localizations.removeAll()
         
         let modules = [
