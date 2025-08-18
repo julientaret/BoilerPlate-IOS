@@ -122,7 +122,7 @@ struct UIModal<Content: View>: View {
     // MARK: - Background View
     private var backgroundView: some View {
         Color.black
-            .opacity(backgroundOpacity * 0.6)
+            .opacity(backgroundOpacity * 0.15)
             .ignoresSafeArea()
             .onTapGesture {
                 dismiss()
@@ -171,24 +171,43 @@ struct UIModal<Content: View>: View {
     
     // MARK: - Center View
     private var centerView: some View {
-        VStack(spacing: 0) {
-            if let title = title {
-                headerView(title: title)
+        ZStack {
+            VStack(spacing: 0) {
+                if let title = title {
+                    centerHeaderView(title: title)
+                }
+                
+                content
+                    .padding(UITheme.Spacing.md)
             }
+            .frame(maxWidth: size.width)
+            .frame(maxHeight: size.maxHeight)
+            .background(Color(.secondarySystemBackground))
+            .cornerRadius(UITheme.CornerRadius.large)
+            .shadow(
+                color: UITheme.Shadow.large.color,
+                radius: UITheme.Shadow.large.radius,
+                x: UITheme.Shadow.large.x,
+                y: UITheme.Shadow.large.y
+            )
             
-            content
-                .padding(UITheme.Spacing.md)
+            // Fixed close button in top right
+            if showCloseButton {
+                VStack {
+                    HStack {
+                        Spacer()
+                        Button(action: dismiss) {
+                            Image(systemName: "xmark.circle.fill")
+                                .font(.title2)
+                                .foregroundColor(Color(.secondaryLabel))
+                                .background(Circle().fill(Color(.secondarySystemBackground)))
+                        }
+                        .padding(UITheme.Spacing.sm)
+                    }
+                    Spacer()
+                }
+            }
         }
-        .frame(maxWidth: size.width)
-        .frame(maxHeight: size.maxHeight)
-        .background(Color(.secondarySystemBackground))
-        .cornerRadius(UITheme.CornerRadius.large)
-        .shadow(
-            color: UITheme.Shadow.large.color,
-            radius: UITheme.Shadow.large.radius,
-            x: UITheme.Shadow.large.x,
-            y: UITheme.Shadow.large.y
-        )
         .scaleEffect(backgroundOpacity)
         .opacity(backgroundOpacity)
     }
@@ -209,6 +228,18 @@ struct UIModal<Content: View>: View {
                         .foregroundColor(Color(.secondaryLabel))
                 }
             }
+        }
+        .padding(UITheme.Spacing.md)
+    }
+    
+    // MARK: - Center Header View (without close button)
+    private func centerHeaderView(title: String) -> some View {
+        HStack {
+            Text(title)
+                .font(UITheme.Typography.headline)
+                .foregroundColor(Color(.label))
+            
+            Spacer()
         }
         .padding(UITheme.Spacing.md)
     }
