@@ -13,70 +13,64 @@ struct ContentView: View {
     
     var body: some View {
         NavigationView {
-            VStack(spacing: UITheme.Spacing.lg) {
-                
-                // Header Section
-                VStack(spacing: UITheme.Spacing.md) {
-                    Image(systemName: "paintbrush.pointed.fill")
-                        .font(.system(size: 60))
-                        .foregroundColor(UITheme.Colors.primary(for: themeManager.isDarkMode))
-                    
-                    L10nText.themeSelection()
-                        .font(UITheme.Typography.title1)
-                        .foregroundColor(UITheme.Colors.textPrimary(for: themeManager.isDarkMode))
-                    
-                    LocalizedText("theme_description", module: "Theme")
-                        .font(UITheme.Typography.body)
-                        .foregroundColor(UITheme.Colors.textSecondary(for: themeManager.isDarkMode))
-                        .multilineTextAlignment(.center)
-                }
-                
-                Spacer()
-                
-                // Theme Toggle Section
+            ScrollView {
                 VStack(spacing: UITheme.Spacing.lg) {
-                    ThemeToggleSwitch()
                     
-                    CompactThemeSelector()
-                    
-                    HStack(spacing: UITheme.Spacing.md) {
-                        LocalizedText("quick_toggle", module: "Theme")
+                    // Header Section
+                    VStack(spacing: UITheme.Spacing.md) {
+                        Image(systemName: "paintbrush.pointed.fill")
+                            .font(.system(size: 60))
+                            .foregroundColor(UITheme.Colors.primary(for: themeManager.isDarkMode))
+                        
+                        L10nText.themeSelection()
+                            .font(UITheme.Typography.title1)
+                            .foregroundColor(UITheme.Colors.textPrimary(for: themeManager.isDarkMode))
+                        
+                        LocalizedText("theme_description", module: "Theme")
+                            .font(UITheme.Typography.body)
                             .foregroundColor(UITheme.Colors.textSecondary(for: themeManager.isDarkMode))
-                        
-                        Spacer()
-                        
-                        SimpleThemeToggle()
+                            .multilineTextAlignment(.center)
                     }
-                    .padding(.horizontal, UITheme.Spacing.md)
-                }
-                
-                Spacer()
-                
-                // Language Section
-                LanguageSelector()
-                
-                Spacer()
-                
-                // Demo Cards
-                VStack(spacing: UITheme.Spacing.md) {
-                    LocalizedText("color_preview", module: "Theme")
-                        .font(UITheme.Typography.headline)
-                        .foregroundColor(UITheme.Colors.textPrimary(for: themeManager.isDarkMode))
                     
-                    LazyVGrid(columns: [
-                        GridItem(.flexible()),
-                        GridItem(.flexible())
-                    ], spacing: UITheme.Spacing.sm) {
-                        ColorPreviewCard(title: "primary", color: UITheme.Colors.primary(for: themeManager.isDarkMode))
-                        ColorPreviewCard(title: "secondary", color: UITheme.Colors.secondary(for: themeManager.isDarkMode))
-                        ColorPreviewCard(title: "success", color: UITheme.Colors.success)
-                        ColorPreviewCard(title: "error", color: UITheme.Colors.error)
+                    // Theme Toggle Section
+                    VStack(spacing: UITheme.Spacing.lg) {
+                        ThemeToggleSwitch()
+                        
+                        CompactThemeSelector()
+                        
+                        HStack(spacing: UITheme.Spacing.md) {
+                            LocalizedText("quick_toggle", module: "Theme")
+                                .foregroundColor(UITheme.Colors.textSecondary(for: themeManager.isDarkMode))
+                            
+                            Spacer()
+                            
+                            SimpleThemeToggle()
+                        }
+                        .padding(.horizontal, UITheme.Spacing.md)
+                    }
+                    
+                    // Language Section
+                    LanguageSelector()
+                    
+                    // Demo Cards
+                    VStack(spacing: UITheme.Spacing.md) {
+                        LocalizedText("color_preview", module: "Theme")
+                            .font(UITheme.Typography.headline)
+                            .foregroundColor(UITheme.Colors.textPrimary(for: themeManager.isDarkMode))
+                        
+                        LazyVGrid(columns: [
+                            GridItem(.flexible()),
+                            GridItem(.flexible())
+                        ], spacing: UITheme.Spacing.sm) {
+                            ColorPreviewCard(title: "primary", color: UITheme.Colors.primary(for: themeManager.isDarkMode))
+                            ColorPreviewCard(title: "secondary", color: UITheme.Colors.secondary(for: themeManager.isDarkMode))
+                            ColorPreviewCard(title: "success", color: UITheme.Colors.success)
+                            ColorPreviewCard(title: "error", color: UITheme.Colors.error)
+                        }
                     }
                 }
-                
-                Spacer()
+                .padding(UITheme.Spacing.lg)
             }
-            .padding(UITheme.Spacing.lg)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(UITheme.Colors.background(for: themeManager.isDarkMode))
             .navigationTitle("app_name".localized(module: "Common"))
