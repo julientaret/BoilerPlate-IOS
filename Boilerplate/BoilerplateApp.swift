@@ -9,9 +9,23 @@ import SwiftUI
 
 @main
 struct BoilerplateApp: App {
+    @StateObject private var coordinator = AppCoordinator()
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ZStack {
+                if coordinator.showSplash {
+                    SplashView()
+                        .transition(.opacity)
+                        .zIndex(1)
+                } else {
+                    ContentView()
+                        .transition(.opacity)
+                }
+            }
+            .onAppear {
+                coordinator.dismissSplash()
+            }
         }
     }
 }
