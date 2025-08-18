@@ -171,43 +171,40 @@ struct UIModal<Content: View>: View {
     
     // MARK: - Center View
     private var centerView: some View {
-        ZStack {
-            VStack(spacing: 0) {
-                if let title = title {
-                    centerHeaderView(title: title)
-                }
-                
-                content
-                    .padding(UITheme.Spacing.md)
-            }
-            .frame(maxWidth: size.width)
-            .frame(maxHeight: size.maxHeight)
-            .background(Color(.secondarySystemBackground))
-            .cornerRadius(UITheme.CornerRadius.large)
-            .shadow(
-                color: UITheme.Shadow.large.color,
-                radius: UITheme.Shadow.large.radius,
-                x: UITheme.Shadow.large.x,
-                y: UITheme.Shadow.large.y
-            )
-            
-            // Fixed close button in top right
-            if showCloseButton {
-                VStack {
-                    HStack {
-                        Spacer()
+        VStack(spacing: 0) {
+            // Header with close button in top right
+            if let title = title {
+                HStack {
+                    Text(title)
+                        .font(UITheme.Typography.headline)
+                        .foregroundColor(Color(.label))
+                    
+                    Spacer()
+                    
+                    if showCloseButton {
                         Button(action: dismiss) {
                             Image(systemName: "xmark.circle.fill")
                                 .font(.title2)
                                 .foregroundColor(Color(.secondaryLabel))
-                                .background(Circle().fill(Color(.secondarySystemBackground)))
                         }
-                        .padding(UITheme.Spacing.sm)
                     }
-                    Spacer()
                 }
+                .padding(UITheme.Spacing.md)
             }
+            
+            // Content
+            content
+                .padding(UITheme.Spacing.md)
         }
+        .background(Color(.secondarySystemBackground))
+        .padding(.horizontal, UIScreen.main.bounds.width * 0.1)
+        .cornerRadius(UITheme.CornerRadius.large)
+        .shadow(
+            color: UITheme.Shadow.large.color,
+            radius: UITheme.Shadow.large.radius,
+            x: UITheme.Shadow.large.x,
+            y: UITheme.Shadow.large.y
+        )
         .scaleEffect(backgroundOpacity)
         .opacity(backgroundOpacity)
     }
@@ -232,17 +229,7 @@ struct UIModal<Content: View>: View {
         .padding(UITheme.Spacing.md)
     }
     
-    // MARK: - Center Header View (without close button)
-    private func centerHeaderView(title: String) -> some View {
-        HStack {
-            Text(title)
-                .font(UITheme.Typography.headline)
-                .foregroundColor(Color(.label))
-            
-            Spacer()
-        }
-        .padding(UITheme.Spacing.md)
-    }
+
     
     // MARK: - Actions
     private func dismiss() {
