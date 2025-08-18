@@ -282,7 +282,7 @@ extension UIBadge {
         // Style outlined
         HStack(spacing: UITheme.Spacing.sm) {
             UIBadge(text: "Outlined", style: .primary, isOutlined: true)
-            UIBadge(text: "Success", style: .success, isOutlined: true, icon: "checkmark")
+            UIBadge(text: "Success", style: .success, icon: "checkmark", isOutlined: true)
             UIBadge(text: "Error", style: .error, isOutlined: true)
         }
         
