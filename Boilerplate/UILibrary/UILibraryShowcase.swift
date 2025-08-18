@@ -174,6 +174,7 @@ struct UILibraryShowcase: View {
             }
             .navigationTitle("UI Library Showcase")
         }
+        .navigationViewStyle(.stack)
         .sheet(isPresented: $showModal) {
             modalContent
         }
