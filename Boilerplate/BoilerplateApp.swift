@@ -10,6 +10,7 @@ import SwiftUI
 @main
 struct BoilerplateApp: App {
     @StateObject private var coordinator = AppCoordinator()
+    @StateObject private var navigationManager = NavigationManager()
     @StateObject private var themeManager = ThemeManager()
     @StateObject private var localizationManager = LocalizationManager()
     
@@ -21,13 +22,14 @@ struct BoilerplateApp: App {
                         .transition(.opacity)
                         .zIndex(1)
                 } else {
-                    ContentView()
+                    MainTabView()
                         .transition(.opacity)
                         .localizedRoot() // Complete rerender on language change
                 }
             }
             .background(UITheme.Colors.background(for: themeManager.isDarkMode))
             .preferredColorScheme(themeManager.currentMode == .system ? nil : (themeManager.isDarkMode ? .dark : .light))
+            .environmentObject(navigationManager)
             .environmentObject(themeManager)
             .environmentObject(localizationManager)
             .onAppear {
