@@ -165,10 +165,10 @@ struct UITextField: View {
         }
         .animation(UITheme.Animation.fast, value: isFocused)
         .animation(UITheme.Animation.fast, value: currentState)
-        .onChange(of: isFocused) { focused in
+        .onChange(of: isFocused) { _, _ in
             updateState()
         }
-        .onChange(of: text) { newText in
+        .onChange(of: text) { _, newText in
             if let maxLength = maxLength, newText.count > maxLength {
                 text = String(newText.prefix(maxLength))
             }
