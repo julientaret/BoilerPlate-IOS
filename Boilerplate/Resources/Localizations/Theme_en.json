@@ -1,0 +1,16 @@
+{
+  "theme": "Theme",
+  "light": "Light",
+  "dark": "Dark",
+  "auto": "Auto",
+  "theme_mode": "Theme mode",
+  "appearance": "Appearance",
+  "theme_selection": "Theme selection",
+  "theme_description": "Switch between light and dark themes",
+  "quick_toggle": "Quick toggle",
+  "color_preview": "Color preview",
+  "primary": "Primary",
+  "secondary": "Secondary",
+  "success": "Success",
+  "error": "Error"
+}

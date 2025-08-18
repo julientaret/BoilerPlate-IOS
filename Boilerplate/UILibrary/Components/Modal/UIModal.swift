@@ -248,7 +248,7 @@ private struct RoundedCorner: Shape {
 }
 
 #Preview {
-    @State var showModal = true
+    @Previewable @State var showModal = true
     
     return ZStack {
         Color.gray.opacity(0.3)

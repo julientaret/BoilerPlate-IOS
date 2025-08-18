@@ -13,15 +13,25 @@ enum ThemeMode: String, CaseIterable {
     case dark = "dark"
     case system = "system"
     
-    var displayName: String {
+    var localizedKey: String {
         switch self {
         case .light:
-            return "Clair"
+            return "light"
         case .dark:
-            return "Sombre"
+            return "dark"
         case .system:
-            return "Auto"
+            return "auto"
         }
+    }
+}
+
+// MARK: - Environment-aware Theme Mode Display
+struct ThemeModeText: View {
+    @EnvironmentObject private var localizationManager: LocalizationManager
+    let mode: ThemeMode
+    
+    var body: some View {
+        Text(localizationManager.localized(mode.localizedKey, module: "Theme"))
     }
 }
 

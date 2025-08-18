@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject private var themeManager: ThemeManager
+    @EnvironmentObject private var localizationManager: LocalizationManager
     
     var body: some View {
         NavigationView {
@@ -20,11 +21,11 @@ struct ContentView: View {
                         .font(.system(size: 60))
                         .foregroundColor(UITheme.Colors.primary(for: themeManager.isDarkMode))
                     
-                    Text("Theme Manager")
+                    L10nText.themeSelection()
                         .font(UITheme.Typography.title1)
                         .foregroundColor(UITheme.Colors.textPrimary(for: themeManager.isDarkMode))
                     
-                    Text("Bascule entre les thèmes clair et sombre")
+                    LocalizedText("theme_description", module: "Theme")
                         .font(UITheme.Typography.body)
                         .foregroundColor(UITheme.Colors.textSecondary(for: themeManager.isDarkMode))
                         .multilineTextAlignment(.center)
@@ -39,7 +40,7 @@ struct ContentView: View {
                     CompactThemeSelector()
                     
                     HStack(spacing: UITheme.Spacing.md) {
-                        Text("Toggle rapide:")
+                        LocalizedText("quick_toggle", module: "Theme")
                             .foregroundColor(UITheme.Colors.textSecondary(for: themeManager.isDarkMode))
                         
                         Spacer()
@@ -51,9 +52,14 @@ struct ContentView: View {
                 
                 Spacer()
                 
+                // Language Section
+                LanguageSelector()
+                
+                Spacer()
+                
                 // Demo Cards
                 VStack(spacing: UITheme.Spacing.md) {
-                    Text("Aperçu des couleurs")
+                    LocalizedText("color_preview", module: "Theme")
                         .font(UITheme.Typography.headline)
                         .foregroundColor(UITheme.Colors.textPrimary(for: themeManager.isDarkMode))
                     
@@ -61,10 +67,10 @@ struct ContentView: View {
                         GridItem(.flexible()),
                         GridItem(.flexible())
                     ], spacing: UITheme.Spacing.sm) {
-                        ColorPreviewCard(title: "Primary", color: UITheme.Colors.primary(for: themeManager.isDarkMode))
-                        ColorPreviewCard(title: "Secondary", color: UITheme.Colors.secondary(for: themeManager.isDarkMode))
-                        ColorPreviewCard(title: "Success", color: UITheme.Colors.success)
-                        ColorPreviewCard(title: "Error", color: UITheme.Colors.error)
+                        ColorPreviewCard(title: "primary", color: UITheme.Colors.primary(for: themeManager.isDarkMode))
+                        ColorPreviewCard(title: "secondary", color: UITheme.Colors.secondary(for: themeManager.isDarkMode))
+                        ColorPreviewCard(title: "success", color: UITheme.Colors.success)
+                        ColorPreviewCard(title: "error", color: UITheme.Colors.error)
                     }
                 }
                 
@@ -73,8 +79,9 @@ struct ContentView: View {
             .padding(UITheme.Spacing.lg)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(UITheme.Colors.background(for: themeManager.isDarkMode))
-            .navigationTitle("Boilerplate")
+            .navigationTitle("app_name".localized(module: "Common"))
             .navigationBarTitleDisplayMode(.inline)
+            .localized()
         }
     }
 }

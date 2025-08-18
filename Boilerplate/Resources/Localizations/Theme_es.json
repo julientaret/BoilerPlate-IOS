@@ -1,0 +1,16 @@
+{
+  "theme": "Tema",
+  "light": "Claro",
+  "dark": "Oscuro",
+  "auto": "Auto",
+  "theme_mode": "Modo del tema",
+  "appearance": "Apariencia",
+  "theme_selection": "Selección de tema",
+  "theme_description": "Cambia entre temas claro y oscuro",
+  "quick_toggle": "Cambio rápido",
+  "color_preview": "Vista previa de colores",
+  "primary": "Principal",
+  "secondary": "Secundario",
+  "success": "Éxito",
+  "error": "Error"
+}

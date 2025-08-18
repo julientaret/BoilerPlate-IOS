@@ -1,0 +1,19 @@
+{
+  "app_name": "Boilerplate",
+  "ok": "OK",
+  "cancel": "Cancelar",
+  "save": "Guardar",
+  "delete": "Eliminar",
+  "edit": "Editar",
+  "close": "Cerrar",
+  "back": "Atrás",
+  "next": "Siguiente",
+  "previous": "Anterior",
+  "yes": "Sí",
+  "no": "No",
+  "loading": "Cargando...",
+  "error": "Error",
+  "success": "Éxito",
+  "warning": "Advertencia",
+  "info": "Información"
+}

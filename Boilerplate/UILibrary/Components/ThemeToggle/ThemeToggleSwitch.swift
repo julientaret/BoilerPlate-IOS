@@ -13,9 +13,13 @@ struct ThemeToggleSwitch: View {
     var body: some View {
         VStack(spacing: UITheme.Spacing.sm) {
             HStack {
-                Label("Thème", systemImage: "paintbrush.fill")
-                    .foregroundColor(UITheme.Colors.textPrimary(for: themeManager.isDarkMode))
-                    .font(UITheme.Typography.headline)
+                Label {
+                    L10nText.theme()
+                } icon: {
+                    Image(systemName: "paintbrush.fill")
+                }
+                .foregroundColor(UITheme.Colors.textPrimary(for: themeManager.isDarkMode))
+                .font(UITheme.Typography.headline)
                 
                 Spacer()
             }
@@ -28,7 +32,7 @@ struct ThemeToggleSwitch: View {
                         VStack(spacing: UITheme.Spacing.xs) {
                             Image(systemName: iconForMode(mode))
                                 .font(.title3)
-                            Text(mode.displayName)
+                            ThemeModeText(mode: mode)
                                 .font(.caption)
                                 .fontWeight(.medium)
                         }
@@ -111,15 +115,16 @@ struct SimpleThemeToggle: View {
 
 struct CompactThemeSelector: View {
     @EnvironmentObject private var themeManager: ThemeManager
+    @EnvironmentObject private var localizationManager: LocalizationManager
     
     var body: some View {
         HStack(spacing: UITheme.Spacing.md) {
             Image(systemName: "paintbrush.fill")
                 .foregroundColor(UITheme.Colors.textSecondary(for: themeManager.isDarkMode))
             
-            Picker("Thème", selection: $themeManager.currentMode) {
+            Picker(localizationManager.localized("theme", module: "Theme"), selection: $themeManager.currentMode) {
                 ForEach(ThemeMode.allCases, id: \.self) { mode in
-                    Text(mode.displayName).tag(mode)
+                    Text(localizationManager.localized(mode.localizedKey, module: "Theme")).tag(mode)
                 }
             }
             .pickerStyle(.segmented)

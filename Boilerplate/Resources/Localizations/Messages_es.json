@@ -1,0 +1,14 @@
+{
+  "welcome": "Bienvenido",
+  "goodbye": "Adiós",
+  "thank_you": "Gracias",
+  "please_wait": "Por favor espera",
+  "operation_completed": "Operación completada",
+  "operation_failed": "Operación fallida",
+  "network_error": "Error de red",
+  "connection_lost": "Conexión perdida",
+  "try_again": "Inténtalo de nuevo",
+  "no_data": "No hay datos disponibles",
+  "data_saved": "Datos guardados",
+  "data_deleted": "Datos eliminados"
+}

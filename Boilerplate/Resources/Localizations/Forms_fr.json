@@ -1,0 +1,16 @@
+{
+  "email": "Email",
+  "password": "Mot de passe",
+  "username": "Nom d'utilisateur",
+  "first_name": "Prénom",
+  "last_name": "Nom",
+  "phone": "Téléphone",
+  "address": "Adresse",
+  "city": "Ville",
+  "country": "Pays",
+  "required_field": "Champ obligatoire",
+  "invalid_email": "Email invalide",
+  "password_too_short": "Mot de passe trop court",
+  "confirm_password": "Confirmer le mot de passe",
+  "passwords_dont_match": "Les mots de passe ne correspondent pas"
+}

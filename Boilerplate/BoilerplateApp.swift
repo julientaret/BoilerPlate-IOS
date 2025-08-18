@@ -11,6 +11,7 @@ import SwiftUI
 struct BoilerplateApp: App {
     @StateObject private var coordinator = AppCoordinator()
     @StateObject private var themeManager = ThemeManager()
+    @StateObject private var localizationManager = LocalizationManager()
     
     var body: some Scene {
         WindowGroup {
@@ -22,11 +23,13 @@ struct BoilerplateApp: App {
                 } else {
                     ContentView()
                         .transition(.opacity)
+                        .localizedRoot() // Rerender complet lors du changement de langue
                 }
             }
             .background(UITheme.Colors.background(for: themeManager.isDarkMode))
             .preferredColorScheme(themeManager.currentMode == .system ? nil : (themeManager.isDarkMode ? .dark : .light))
             .environmentObject(themeManager)
+            .environmentObject(localizationManager)
             .onAppear {
                 coordinator.dismissSplash()
             }
