@@ -27,30 +27,29 @@ struct LanguageSelector: View {
             
             HStack(spacing: 0) {
                 ForEach(SupportedLanguage.allCases, id: \.self) { language in
-                    Button(action: {
-                        localizationManager.setLanguage(language)
-                    }) {
-                        VStack(spacing: UITheme.Spacing.xs) {
-                            Text(language.flag)
-                                .font(.title2)
-                            Text(language.displayName)
-                                .font(.caption)
-                                .fontWeight(.medium)
-                        }
-                        .foregroundColor(
-                            localizationManager.currentLanguage == language 
-                                ? .white 
-                                : UITheme.Colors.textPrimary(for: themeManager.isDarkMode)
-                        )
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, UITheme.Spacing.sm)
-                        .background(
-                            localizationManager.currentLanguage == language 
-                                ? UITheme.Colors.primary(for: themeManager.isDarkMode)
-                                : Color.clear
-                        )
+                    VStack(spacing: UITheme.Spacing.xs) {
+                        Text(language.flag)
+                            .font(.title2)
+                        Text(language.displayName)
+                            .font(.caption)
+                            .fontWeight(.medium)
                     }
-                    .buttonStyle(PlainButtonStyle())
+                    .foregroundColor(
+                        localizationManager.currentLanguage == language 
+                            ? .white 
+                            : UITheme.Colors.textPrimary(for: themeManager.isDarkMode)
+                    )
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, UITheme.Spacing.sm)
+                    .background(
+                        localizationManager.currentLanguage == language 
+                            ? UITheme.Colors.primary(for: themeManager.isDarkMode)
+                            : Color.clear
+                    )
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        localizationManager.setLanguage(language)
+                    }
                 }
             }
             .background(

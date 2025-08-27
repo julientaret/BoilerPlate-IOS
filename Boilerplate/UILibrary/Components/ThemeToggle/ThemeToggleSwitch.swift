@@ -26,30 +26,29 @@ struct ThemeToggleSwitch: View {
             
             HStack(spacing: 0) {
                 ForEach(ThemeMode.allCases, id: \.self) { mode in
-                    Button(action: {
-                        themeManager.setTheme(mode)
-                    }) {
-                        VStack(spacing: UITheme.Spacing.xs) {
-                            Image(systemName: iconForMode(mode))
-                                .font(.title3)
-                            ThemeModeText(mode: mode)
-                                .font(.caption)
-                                .fontWeight(.medium)
-                        }
-                        .foregroundColor(
-                            themeManager.currentMode == mode 
-                                ? .white 
-                                : UITheme.Colors.textPrimary(for: themeManager.isDarkMode)
-                        )
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, UITheme.Spacing.sm)
-                        .background(
-                            themeManager.currentMode == mode 
-                                ? UITheme.Colors.primary(for: themeManager.isDarkMode)
-                                : Color.clear
-                        )
+                    VStack(spacing: UITheme.Spacing.xs) {
+                        Image(systemName: iconForMode(mode))
+                            .font(.title3)
+                        ThemeModeText(mode: mode)
+                            .font(.caption)
+                            .fontWeight(.medium)
                     }
-                    .buttonStyle(PlainButtonStyle())
+                    .foregroundColor(
+                        themeManager.currentMode == mode 
+                            ? .white 
+                            : UITheme.Colors.textPrimary(for: themeManager.isDarkMode)
+                    )
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, UITheme.Spacing.sm)
+                    .background(
+                        themeManager.currentMode == mode 
+                            ? UITheme.Colors.primary(for: themeManager.isDarkMode)
+                            : Color.clear
+                    )
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        themeManager.setTheme(mode)
+                    }
                 }
             }
             .background(
