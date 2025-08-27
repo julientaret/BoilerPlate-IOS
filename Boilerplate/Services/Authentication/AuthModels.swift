@@ -29,6 +29,18 @@ struct AuthUser: Codable, Identifiable {
         case prefs
     }
     
+    // Normal initializer
+    init(id: String, email: String, name: String, emailVerification: Bool, registration: Date, status: Bool, passwordUpdate: Date, prefs: [String: Any]?) {
+        self.id = id
+        self.email = email
+        self.name = name
+        self.emailVerification = emailVerification
+        self.registration = registration
+        self.status = status
+        self.passwordUpdate = passwordUpdate
+        self.prefs = prefs
+    }
+    
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
@@ -44,7 +56,13 @@ struct AuthUser: Codable, Identifiable {
         let passwordUpdateString = try container.decode(String.self, forKey: .passwordUpdate)
         passwordUpdate = ISO8601DateFormatter().date(from: passwordUpdateString) ?? Date()
         
-        prefs = try container.decodeIfPresent([String: Any].self, forKey: .prefs)
+        // Handle [String: Any] which is not directly Codable
+        if let prefsData = try container.decodeIfPresent(Data.self, forKey: .prefs),
+           let prefsDict = try? JSONSerialization.jsonObject(with: prefsData, options: []) as? [String: Any] {
+            prefs = prefsDict
+        } else {
+            prefs = nil
+        }
     }
     
     func encode(to encoder: Encoder) throws {
@@ -58,8 +76,10 @@ struct AuthUser: Codable, Identifiable {
         try container.encode(ISO8601DateFormatter().string(from: registration), forKey: .registration)
         try container.encode(ISO8601DateFormatter().string(from: passwordUpdate), forKey: .passwordUpdate)
         
+        // Handle [String: Any] which is not directly Codable
         if let prefs = prefs {
-            try container.encode(prefs, forKey: .prefs)
+            let prefsData = try JSONSerialization.data(withJSONObject: prefs, options: [])
+            try container.encode(prefsData, forKey: .prefs)
         }
     }
     
