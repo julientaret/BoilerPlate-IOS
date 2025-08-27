@@ -166,7 +166,10 @@ struct UILibraryShowcase: View {
                             backgroundDemo(UIBackground.blueGradient, title: "Blue Gradient")
                             backgroundDemo(UIBackground.sunsetGradient, title: "Sunset Gradient")
                             backgroundDemo(UIBackground.greenGradient, title: "Green Gradient")
-                            backgroundDemo(UIBackground.radialBlue, title: "Radial Blue")
+                            backgroundDemo(UIBackground.cosmicPurpleCenter, title: "Cosmic Purple")
+                            backgroundDemo(UIBackground.lightElegant, title: "Light Elegant", textColor: .black)
+                            backgroundDemo(UIBackground.darkElegant, title: "Dark Elegant")
+                            backgroundDemo(UIBackground.etherealPurplePink, title: "Ethereal Purple")
                         }
                     }
                 }
@@ -211,14 +214,14 @@ struct UILibraryShowcase: View {
     }
     
     @ViewBuilder
-    private func backgroundDemo(_ background: UIBackground, title: String) -> some View {
+    private func backgroundDemo(_ background: UIBackground, title: String, textColor: Color = .white) -> some View {
         ZStack {
             background
             
             Text(title)
                 .font(UITheme.Typography.title3)
                 .fontWeight(.semibold)
-                .foregroundColor(.white)
+                .foregroundColor(textColor)
         }
         .frame(height: 60)
         .cornerRadius(UITheme.CornerRadius.medium)

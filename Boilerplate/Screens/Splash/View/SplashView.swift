@@ -12,8 +12,7 @@ struct SplashView: View {
     
     var body: some View {
         ZStack {
-            Color.black
-                .ignoresSafeArea()
+            UIBackground.greenGradient
             
             SplashLogoComponent(animationCompleted: model.animationCompleted)
         }
