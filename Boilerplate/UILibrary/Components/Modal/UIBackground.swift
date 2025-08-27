@@ -453,6 +453,27 @@ extension UIBackground {
             )
         )
     }
+    
+    // MARK: - Theme-Adaptive Backgrounds
+    
+            /// Elegant background that adapts to theme (light/dark)
+    static func elegantAdaptive(colorScheme: ColorScheme) -> UIBackground {
+        colorScheme == .dark ? .darkElegant : .lightElegant
+    }
+    
+            /// Elegant background using environment color scheme
+    static var elegantThemed: UIBackground {
+        UIBackground(type: .solid(.clear)) // This will be overridden in the view
+    }
+}
+
+// MARK: - Theme-Aware Background View
+struct ThemeAwareBackground: View {
+    @Environment(\.colorScheme) var colorScheme
+    
+    var body: some View {
+        UIBackground.elegantAdaptive(colorScheme: colorScheme)
+    }
 }
 
 #Preview {

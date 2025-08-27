@@ -115,7 +115,7 @@ struct ProfileView: View {
                 }
                 .padding(UITheme.Spacing.lg)
             }
-            .background(UITheme.Colors.background(for: themeManager.isDarkMode))
+            .background(ThemeAwareBackground())
             .navigationTitle("Profile")
             .navigationBarTitleDisplayMode(.large)
         }
@@ -252,7 +252,7 @@ struct EditProfileView: View {
                 }
             }
             .padding(UITheme.Spacing.lg)
-            .background(UITheme.Colors.background(for: themeManager.isDarkMode))
+            .background(ThemeAwareBackground())
             .navigationTitle("Edit Profile")
             .navigationBarTitleDisplayMode(.inline)
             .onAppear {

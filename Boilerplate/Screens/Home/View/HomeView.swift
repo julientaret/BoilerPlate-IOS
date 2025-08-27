@@ -110,7 +110,7 @@ struct HomeView: View {
                 }
                 .padding(UITheme.Spacing.lg)
             }
-            .background(UITheme.Colors.background(for: themeManager.isDarkMode))
+            .background(ThemeAwareBackground())
             .navigationTitle("Home")
             .navigationBarTitleDisplayMode(.large)
         }

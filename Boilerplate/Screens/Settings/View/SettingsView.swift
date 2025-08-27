@@ -129,7 +129,7 @@ struct SettingsView: View {
                 }
                 .padding(UITheme.Spacing.lg)
             }
-            .background(UITheme.Colors.background(for: themeManager.isDarkMode))
+            .background(ThemeAwareBackground())
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.large)
         }
