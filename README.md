@@ -7,25 +7,31 @@ Un projet boilerplate iOS utilisant Swift et SwiftUI avec une architecture par s
 - **iOS**: Version minimale iOS 18.5
 - **Swift**: Dernière version (Swift 5.9+)
 - **Framework**: SwiftUI
-- **Architecture**: Services avec organisation Vue/Model/Component
+- **Architecture**: Modulaire avec séparation Screens/Services
 
 ## 🏗️ Architecture
 
-Le projet suit une architecture par services où chaque fonctionnalité est organisée en dossiers contenant :
+Le projet suit une architecture modulaire où les écrans et services sont séparés :
 
 ```
-Services/
-  ├── [ServiceName]/
+Screens/
+  ├── [ScreenName]/
   │   ├── View/          # Vues SwiftUI
   │   ├── Model/         # Modèles de données et logique métier
   │   └── Component/     # Composants réutilisables
+  └── ...
+
+UILibrary/
+  ├── Theme/            # Gestionnaire de thème
+  ├── Components/       # Composants UI réutilisables
   └── ...
 
 Core/
   ├── Utils/            # Utilitaires partagés
   ├── Extensions/       # Extensions Swift
   ├── Constants/        # Constantes de l'application
-  └── Localization/     # Système de localisation
+  ├── Localization/     # Système de localisation
+  └── Navigation/       # Gestion de la navigation
 ```
 
 ## 🌍 Système de Localisation
@@ -176,9 +182,9 @@ UITheme.Colors.surface(for: themeManager.isDarkMode)
 - Architecture respectée : View/Model/Component
 
 **Fichiers :**
-- `Services/Splash/View/SplashView.swift` - Vue principale du splash
-- `Services/Splash/Model/SplashModel.swift` - Logique métier et timing
-- `Services/Splash/Component/SplashLogoComponent.swift` - Composant logo animé
+- `Screens/Splash/View/SplashView.swift` - Vue principale du splash
+- `Screens/Splash/Model/SplashModel.swift` - Logique métier et timing
+- `Screens/Splash/Component/SplashLogoComponent.swift` - Composant logo animé
 - `Core/Utils/AppCoordinator.swift` - Coordination de navigation
 
 ### 🎨 Interface Utilisateur
