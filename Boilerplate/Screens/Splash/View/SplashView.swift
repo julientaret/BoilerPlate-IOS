@@ -12,7 +12,7 @@ struct SplashView: View {
     
     var body: some View {
         ZStack {
-            UIBackground.greenGradient
+            UIBackground.sunsetGlowRadial
             
             SplashLogoComponent(animationCompleted: model.animationCompleted)
         }

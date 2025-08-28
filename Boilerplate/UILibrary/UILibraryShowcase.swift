@@ -27,14 +27,21 @@ struct UILibraryShowcase: View {
                         VStack(spacing: UITheme.Spacing.md) {
                             HStack(spacing: UITheme.Spacing.sm) {
                                 UIButton(title: "Primary", style: .primary, size: .small) {}
+                                    .frame(maxWidth: .infinity)
                                 UIButton(title: "Secondary", style: .secondary, size: .small) {}
+                                    .frame(maxWidth: .infinity)
                                 UIButton(title: "Tertiary", style: .tertiary, size: .small) {}
+                                    .frame(maxWidth: .infinity)
                             }
                             
                             UIButton(title: "With Icon", style: .primary, icon: "heart.fill") {}
+                                .frame(maxWidth: .infinity)
                             UIButton(title: "Loading", style: .primary, isLoading: true) {}
+                                .frame(maxWidth: .infinity)
                             UIButton(title: "Disabled", style: .primary, isDisabled: true) {}
+                                .frame(maxWidth: .infinity)
                             UIButton(title: "Destructive", style: .destructive, size: .large) {}
+                                .frame(maxWidth: .infinity)
                         }
                     }
                     
@@ -84,10 +91,12 @@ struct UILibraryShowcase: View {
                             UICard(style: .elevated) {
                                 cardContent(title: "Carte Élevée", description: "Avec ombre pour l'élévation")
                             }
+                            .frame(maxWidth: .infinity)
                             
                             UICard(style: .outlined, onTap: {}) {
                                 cardContent(title: "Carte avec Bordure", description: "Cliquable avec bordure")
                             }
+                            .frame(maxWidth: .infinity)
                             
                             UICard(style: .filled) {
                                 HStack {
@@ -96,6 +105,7 @@ struct UILibraryShowcase: View {
                                     UIButton(title: "Action", style: .primary, size: .small) {}
                                 }
                             }
+                            .frame(maxWidth: .infinity)
                         }
                     }
                     
@@ -163,13 +173,46 @@ struct UILibraryShowcase: View {
                     // MARK: - Backgrounds Section
                     showcaseSection(title: "Backgrounds") {
                         VStack(spacing: UITheme.Spacing.sm) {
+                            // Basic Backgrounds
+                            backgroundDemo(UIBackground.primary, title: "Primary", textColor: .primary)
+                            backgroundDemo(UIBackground.secondary, title: "Secondary", textColor: .primary)
+                            backgroundDemo(UIBackground.overlay, title: "Overlay")
+                            
+                            // 2025 Trending - Purple & Pink Collection
+                            backgroundDemo(UIBackground.etherealPurplePink, title: "Ethereal Purple Pink")
+                            backgroundDemo(UIBackground.deepPurpleGalaxy, title: "Deep Purple Galaxy")
+                            backgroundDemo(UIBackground.electricVioletDreams, title: "Electric Violet Dreams")
+                            
+                            // Sunset Collection
+                            backgroundDemo(UIBackground.vibrantSunset2025, title: "Vibrant Sunset 2025")
+                            backgroundDemo(UIBackground.goldenHourMagic, title: "Golden Hour Magic")
+                            
+                            // Ocean & Sky Collection
+                            backgroundDemo(UIBackground.electricOceanWaves, title: "Electric Ocean Waves")
+                            backgroundDemo(UIBackground.dreamySkyBlue, title: "Dreamy Sky Blue", textColor: .black)
+                            
+                            // Soft & Pastel Collection
+                            backgroundDemo(UIBackground.softPinkSerenity, title: "Soft Pink Serenity", textColor: .black)
+                            backgroundDemo(UIBackground.mintFreshBreeze, title: "Mint Fresh Breeze", textColor: .black)
+                            
+                            // Bold & Electric Collection
+                            backgroundDemo(UIBackground.electricNeonBurst, title: "Electric Neon Burst")
+                            backgroundDemo(UIBackground.cyberPurpleMatrix, title: "Cyber Purple Matrix")
+                            
+                            // Radial Gradients
+                            backgroundDemo(UIBackground.cosmicPurpleCenter, title: "Cosmic Purple Center")
+                            backgroundDemo(UIBackground.sunsetGlowRadial, title: "Sunset Glow Radial")
+                            
+                            // Theme Collection
+                            backgroundDemo(UIBackground.lightElegant, title: "Light Elegant", textColor: .black)
+                            backgroundDemo(UIBackground.darkElegant, title: "Dark Elegant")
+                            backgroundDemo(UIBackground.midnightPurple, title: "Midnight Purple")
+                            backgroundDemo(UIBackground.darkOceanDepths, title: "Dark Ocean Depths")
+                            
+                            // Legacy Gradients (Enhanced)
                             backgroundDemo(UIBackground.blueGradient, title: "Blue Gradient")
                             backgroundDemo(UIBackground.sunsetGradient, title: "Sunset Gradient")
                             backgroundDemo(UIBackground.greenGradient, title: "Green Gradient")
-                            backgroundDemo(UIBackground.cosmicPurpleCenter, title: "Cosmic Purple")
-                            backgroundDemo(UIBackground.lightElegant, title: "Light Elegant", textColor: .black)
-                            backgroundDemo(UIBackground.darkElegant, title: "Dark Elegant")
-                            backgroundDemo(UIBackground.etherealPurplePink, title: "Ethereal Purple")
                         }
                     }
                 }

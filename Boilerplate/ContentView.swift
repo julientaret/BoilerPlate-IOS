@@ -109,4 +109,6 @@ struct ColorPreviewCard: View {
 
 #Preview {
     ContentView()
+        .environmentObject(ThemeManager())
+        .environmentObject(LocalizationManager())
 }

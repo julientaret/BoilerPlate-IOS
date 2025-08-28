@@ -17,7 +17,7 @@ struct SplashLogoComponent: View {
         VStack(spacing: 20) {
             Image(systemName: "swift")
                 .font(.system(size: 80))
-                .foregroundColor(.blue)
+                .foregroundColor(.white)
                 .scaleEffect(scale)
                 .opacity(opacity)
                 .animation(.easeInOut(duration: 1.0), value: scale)
@@ -26,9 +26,13 @@ struct SplashLogoComponent: View {
             Text("Boilerplate")
                 .font(.title)
                 .fontWeight(.bold)
-                .foregroundColor(.primary)
+                .foregroundColor(.white)
                 .opacity(opacity)
                 .animation(.easeInOut(duration: 1.0).delay(0.5), value: opacity)
+            Text("Start building your app now!")
+            .font(.subheadline)
+            .fontWeight(.bold)
+            .foregroundColor(.white)
         }
         .onAppear {
             withAnimation {
