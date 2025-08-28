@@ -257,7 +257,9 @@ struct CalendarServiceExample: View {
             } else {
                 LazyVStack(alignment: .leading, spacing: 8) {
                     ForEach(calendarService.events) { event in
-                        EventRowView(event: event, calendarService: calendarService)
+                        EventRowView(event: event, calendarService: calendarService) {
+                            await loadData()
+                        }
                     }
                 }
             }
@@ -408,6 +410,7 @@ struct CalendarRowView: View {
 struct EventRowView: View {
     let event: CalendarEvent
     let calendarService: CalendarService
+    let onEventDeleted: () async -> Void
     
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -422,6 +425,7 @@ struct EventRowView: View {
                     Task {
                         do {
                             try await calendarService.deleteEvent(event)
+                            await onEventDeleted()
                         } catch {
                             print("Failed to delete event: \(error)")
                         }
