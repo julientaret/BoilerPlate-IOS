@@ -14,6 +14,12 @@ struct BoilerplateApp: App {
     @StateObject private var themeManager = ThemeManager()
     @StateObject private var localizationManager = LocalizationManager()
     
+    init() {
+        if OneSignalConfiguration.shared.isConfigured() {
+            OneSignalService.shared.initialize(appId: OneSignalConfiguration.shared.appId)
+        }
+    }
+    
     var body: some Scene {
         WindowGroup {
             ZStack {
