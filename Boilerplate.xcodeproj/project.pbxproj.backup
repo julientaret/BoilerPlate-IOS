@@ -400,8 +400,6 @@
 				DEVELOPMENT_TEAM = XFBQ477LZ8;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSCalendarsFullAccessUsageDescription = "Cette application a besoin d'un accès complet au calendrier pour créer et gérer vos événements.";
-				INFOPLIST_KEY_NSCalendarsUsageDescription = "Cette application utilise le calendrier pour créer, modifier et gérer vos événements personnels.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -430,8 +428,6 @@
 				DEVELOPMENT_TEAM = XFBQ477LZ8;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSCalendarsFullAccessUsageDescription = "Cette application a besoin d'un accès complet au calendrier pour créer et gérer vos événements.";
-				INFOPLIST_KEY_NSCalendarsUsageDescription = "Cette application utilise le calendrier pour créer, modifier et gérer vos événements personnels.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

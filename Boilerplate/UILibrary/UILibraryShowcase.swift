@@ -170,6 +170,35 @@ struct UILibraryShowcase: View {
                         }
                     }
                     
+                    // MARK: - Services Section
+                    showcaseSection(title: "Services") {
+                        VStack(spacing: UITheme.Spacing.md) {
+                            NavigationLink("Calendar Service Demo") {
+                                CalendarServiceExample()
+                            }
+                            .buttonStyle(.bordered)
+                            .frame(maxWidth: .infinity)
+                            
+                            NavigationLink("Calendar Permission Test") {
+                                CalendarPermissionTest()
+                            }
+                            .buttonStyle(.bordered)
+                            .frame(maxWidth: .infinity)
+                            
+                            NavigationLink("Calendar Test Alternative") {
+                                CalendarTestAlternative()
+                            }
+                            .buttonStyle(.bordered)
+                            .frame(maxWidth: .infinity)
+                            
+                            NavigationLink("Monthly Calendar View") {
+                                MonthlyCalendarView()
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .frame(maxWidth: .infinity)
+                        }
+                    }
+                    
                     // MARK: - Backgrounds Section
                     showcaseSection(title: "Backgrounds") {
                         VStack(spacing: UITheme.Spacing.sm) {
