@@ -19,6 +19,7 @@ struct CalendarServiceExample: View {
     @State private var showCreateEventSheet = false
     @State private var selectedDate = Date()
     @State private var searchQuery = ""
+    @State private var refreshTrigger = UUID()
     
     var body: some View {
         NavigationView {
@@ -55,6 +56,10 @@ struct CalendarServiceExample: View {
                     await loadData()
                 }
             }
+        }
+        .onChange(of: calendarService.events) { _, newEvents in
+            print("🔄 CalendarServiceExample: Events changed, new count: \(newEvents.count)")
+            refreshTrigger = UUID()
         }
     }
     
@@ -131,6 +136,7 @@ struct CalendarServiceExample: View {
             }
             .padding()
         }
+        .id(refreshTrigger) // Force le rechargement complet quand refreshTrigger change
         .refreshable {
             await loadData()
         }

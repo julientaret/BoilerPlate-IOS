@@ -127,6 +127,20 @@ class CalendarService: ObservableObject {
         // S'assurer que le calendrier Boilerplate existe
         await ensureBoilerplateCalendar()
         
+        // Debugging: Vérifier tous les événements dans tous les calendriers
+        print("🔍 Debugging: Checking all calendars for events...")
+        let allCalendars = eventStore.calendars(for: .event)
+        for calendar in allCalendars {
+            let predicate = eventStore.predicateForEvents(withStart: startDate, end: endDate, calendars: [calendar])
+            let events = eventStore.events(matching: predicate)
+            if !events.isEmpty {
+                print("   📅 Calendar '\(calendar.title)': \(events.count) events")
+                for event in events.prefix(2) {
+                    print("      - \(event.title ?? "No title")")
+                }
+            }
+        }
+        
         // Charger uniquement les événements du calendrier Boilerplate
         guard let boilerplateCalendar = boilerplateCalendar else {
             events = []
@@ -140,7 +154,18 @@ class CalendarService: ObservableObject {
         )
         
         let ekEvents = eventStore.events(matching: predicate)
-        events = ekEvents.map { CalendarEvent(from: $0) }
+        let newEvents = ekEvents.map { CalendarEvent(from: $0) }
+        
+        // Forcer la mise à jour sur le main thread avec notification explicite
+        DispatchQueue.main.async {
+            self.events = newEvents
+            self.objectWillChange.send()
+        }
+        
+        print("📋 LoadEvents: Found \(ekEvents.count) events in Boilerplate calendar")
+        for ekEvent in ekEvents.prefix(5) {
+            print("   - \(ekEvent.title ?? "No title") (ID: \(ekEvent.eventIdentifier ?? "No ID"))")
+        }
     }
     
     func createEvent(_ event: CalendarEvent) async throws -> String {
@@ -191,6 +216,11 @@ class CalendarService: ObservableObject {
             
             await loadEvents(from: startDate, to: endDate)
             
+            // Notifier le SharedCalendarService pour forcer le rafraîchissement
+            DispatchQueue.main.async {
+                SharedCalendarService.shared.forceRefresh()
+            }
+            
             return ekEvent.eventIdentifier ?? ""
         } catch {
             throw CalendarError.saveFailed(error.localizedDescription)
@@ -232,7 +262,27 @@ class CalendarService: ObservableObject {
         
         do {
             try eventStore.remove(ekEvent, span: .thisEvent)
+            print("✅ Event deleted successfully with ID: \(eventId)")
+            
+            // Vérifier si l'événement existe dans d'autres calendriers avec le même titre
+            await cleanupDuplicateEvents(deletedEventTitle: ekEvent.title ?? "")
+            
+            // Rafraîchir automatiquement les événements après suppression
+            let calendar = Foundation.Calendar.current
+            let now = Date()
+            let startDate = calendar.date(byAdding: .month, value: -1, to: now) ?? now
+            let endDate = calendar.date(byAdding: .month, value: 2, to: now) ?? now
+            
+            await loadEvents(from: startDate, to: endDate)
+            print("🔄 Events reloaded after deletion: \(events.count) events remaining")
+            
+            // Notifier le SharedCalendarService pour forcer le rafraîchissement
+            DispatchQueue.main.async {
+                SharedCalendarService.shared.forceRefresh()
+            }
+            
         } catch {
+            print("❌ Failed to delete event with ID \(eventId): \(error)")
             throw CalendarError.deleteFailed(error.localizedDescription)
         }
     }
@@ -331,6 +381,38 @@ class CalendarService: ObservableObject {
     }
     
     // MARK: - Helper Methods
+    
+    private func cleanupDuplicateEvents(deletedEventTitle: String) async {
+        guard !deletedEventTitle.isEmpty else { return }
+        
+        print("🧹 Cleaning up duplicate events with title: '\(deletedEventTitle)'")
+        
+        let allCalendars = eventStore.calendars(for: .event)
+        let calendar = Foundation.Calendar.current
+        let now = Date()
+        let startDate = calendar.date(byAdding: .month, value: -1, to: now) ?? now
+        let endDate = calendar.date(byAdding: .month, value: 2, to: now) ?? now
+        
+        for calendar in allCalendars {
+            // Skip Boilerplate calendar as we already handle it
+            if calendar.title == boilerplateCalendarTitle { continue }
+            
+            let predicate = eventStore.predicateForEvents(withStart: startDate, end: endDate, calendars: [calendar])
+            let events = eventStore.events(matching: predicate)
+            
+            for event in events {
+                if event.title == deletedEventTitle {
+                    print("🗑️ Found duplicate event '\(event.title ?? "")' in calendar '\(calendar.title)', deleting...")
+                    do {
+                        try eventStore.remove(event, span: .thisEvent)
+                        print("✅ Duplicate event deleted from '\(calendar.title)'")
+                    } catch {
+                        print("❌ Failed to delete duplicate event: \(error)")
+                    }
+                }
+            }
+        }
+    }
     
     private func createEKRecurrenceRule(from rule: CalendarRecurrenceRule) -> EKRecurrenceRule {
         let frequency: EKRecurrenceFrequency

@@ -18,22 +18,36 @@ struct MonthlyCalendarView: View {
     @State private var selectedDate = Date()
     @State private var selectedEvent: CalendarEvent?
     @State private var showCreateEventSheet = false
+    @State private var refreshTrigger = UUID()
+    @State private var isInitialLoadComplete = false
     
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                // UICalendarView natif
-                UICalendarViewWrapper(
-                    selectedDate: $selectedDate,
-                    events: calendarService.events,
-                    onDateSelected: { date in
-                        selectedDate = date
-                    },
-                    onEventTap: { event in
-                        selectedEvent = event
+                if isInitialLoadComplete {
+                    // UICalendarView natif
+                    UICalendarViewWrapper(
+                        selectedDate: $selectedDate,
+                        events: calendarService.events,
+                        onDateSelected: { date in
+                            selectedDate = date
+                        },
+                        onEventTap: { event in
+                            selectedEvent = event
+                        }
+                    )
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .id(refreshTrigger) // Force le rechargement complet quand refreshTrigger change
+                } else {
+                    // Indicateur de chargement pendant l'initialisation
+                    VStack {
+                        Spacer()
+                        ProgressView("Chargement du calendrier...")
+                            .scaleEffect(1.2)
+                        Spacer()
                     }
-                )
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
                 
                 Spacer()
             }
@@ -51,15 +65,15 @@ struct MonthlyCalendarView: View {
                 }
             }
             .task {
-                await loadCalendarData()
+                await loadData()
             }
             .onAppear {
                 Task {
-                    print("👀 View appeared, auth status: \(calendarService.authorizationStatus)")
+                    print("👀 MonthlyCalendarView appeared, auth status: \(calendarService.authorizationStatus)")
                     // Rafraîchir uniquement si on revient sur la vue avec autorisation
                     if calendarService.authorizationStatus == .authorized {
-                        print("🔄 Refreshing on appear...")
-                        await refreshEvents()
+                        print("🔄 MonthlyCalendarView refreshing on appear...")
+                        await loadData()
                     }
                 }
             }
@@ -68,7 +82,7 @@ struct MonthlyCalendarView: View {
             }
             .sheet(isPresented: $showCreateEventSheet) {
                 QuickCreateEventView(calendarService: calendarService, selectedDate: selectedDate) {
-                    await refreshEvents()
+                    await loadData()
                 }
             }
             .onChange(of: selectedDate) { _, newDate in
@@ -76,35 +90,19 @@ struct MonthlyCalendarView: View {
                     await loadEventsForDate(newDate)
                 }
             }
-            .onChange(of: calendarService.events) { _, _ in
+            .onChange(of: calendarService.events) { _, newEvents in
                 // Force le rafraîchissement du UICalendarView quand les événements changent
+                print("🔄 MonthlyCalendarView: Events changed, new count: \(newEvents.count)")
+                refreshTrigger = UUID()
             }
             .refreshable {
-                await refreshEvents()
+                await loadData()
             }
         }
     }
     
     // MARK: - Helper Methods
     
-    private func loadCalendarData() async {
-        print("🚀 Loading calendar data...")
-        print("📋 Auth status: \(calendarService.authorizationStatus)")
-        
-        if calendarService.authorizationStatus != .authorized {
-            print("🔐 Requesting calendar access...")
-            let granted = await calendarService.requestCalendarAccess()
-            if !granted {
-                print("❌ Calendar access denied")
-                return
-            }
-            print("✅ Calendar access granted")
-        }
-        
-        print("📅 Loading initial events...")
-        await refreshEvents()
-        print("✅ Calendar data loaded with \(calendarService.events.count) events")
-    }
     
     private func loadEventsForDate(_ date: Date) async {
         let calendar = Foundation.Calendar.current
@@ -118,17 +116,39 @@ struct MonthlyCalendarView: View {
         print("📅 Events loaded for date range: \(calendarService.events.count) events")
     }
     
-    private func refreshEvents() async {
-        let calendar = Foundation.Calendar.current
+    private func loadData() async {
+        print("🔄 MonthlyCalendarView: Loading data...")
+        print("🔐 MonthlyCalendarView: Current auth status: \(calendarService.authorizationStatus)")
+        
+        // S'assurer d'avoir l'autorisation avant de charger
+        if calendarService.authorizationStatus != .authorized {
+            print("🔐 MonthlyCalendarView: Requesting calendar access...")
+            let granted = await calendarService.requestCalendarAccess()
+            if !granted {
+                print("❌ MonthlyCalendarView: Calendar access denied")
+                isInitialLoadComplete = true // Afficher même en cas d'échec
+                return
+            }
+            print("✅ MonthlyCalendarView: Calendar access granted")
+        }
+        
+        await calendarService.loadCalendars()
         let now = Date()
-        
-        // Charger une plage plus large : 3 mois autour de la date actuelle
-        let startDate = calendar.date(byAdding: .month, value: -1, to: now) ?? now
-        let endDate = calendar.date(byAdding: .month, value: 2, to: now) ?? now
-        
+        let startDate = Foundation.Calendar.current.date(byAdding: .month, value: -1, to: now) ?? now
+        let endDate = Foundation.Calendar.current.date(byAdding: .month, value: 2, to: now) ?? now
         await calendarService.loadEvents(from: startDate, to: endDate)
+        print("✅ MonthlyCalendarView: Data loaded, \(calendarService.events.count) events found")
         
-        print("🔄 Events refreshed: \(calendarService.events.count) events loaded")
+        // Marquer le chargement initial comme terminé
+        isInitialLoadComplete = true
+        
+        // Petit délai puis forcer une mise à jour de l'UI
+        try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconde
+        print("🔄 MonthlyCalendarView: Initial load complete, UI ready")
+    }
+    
+    private func refreshEvents() async {
+        await loadData()
     }
 }
 

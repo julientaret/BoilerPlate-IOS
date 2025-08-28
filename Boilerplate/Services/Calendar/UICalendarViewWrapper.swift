@@ -33,6 +33,15 @@ struct UICalendarViewWrapper: UIViewRepresentable {
     func updateUIView(_ uiView: UICalendarView, context: Context) {
         print("🔄 UICalendarView updateUIView called with \(events.count) events")
         
+        if !events.isEmpty {
+            print("📋 Event details:")
+            for event in events.prefix(3) {
+                let formatter = DateFormatter()
+                formatter.dateFormat = "dd/MM/yyyy"
+                print("   - \(event.title) on \(formatter.string(from: event.startDate))")
+            }
+        }
+        
         // Mise à jour de la date sélectionnée
         if let selection = uiView.selectionBehavior as? UICalendarSelectionSingleDate {
             let newSelectedComponents = Foundation.Calendar.current.dateComponents([.year, .month, .day], from: selectedDate)
@@ -41,32 +50,8 @@ struct UICalendarViewWrapper: UIViewRepresentable {
             }
         }
         
-        // Mise à jour des décorations d'événements - plus agressive pour assurer le rafraîchissement
-        let eventDates = events.map { event in
-            Foundation.Calendar.current.dateComponents([.year, .month, .day], from: event.startDate)
-        }
-        
-        // Forcer le rafraîchissement de toutes les décorations
-        let calendar = Foundation.Calendar.current
-        let currentDate = Date()
-        
-        // Rafraîchir le mois actuel + mois précédent et suivant
-        var allDatesToReload: [DateComponents] = []
-        for monthOffset in -1...1 {
-            if let monthDate = calendar.date(byAdding: .month, value: monthOffset, to: currentDate),
-               let monthInterval = calendar.dateInterval(of: .month, for: monthDate) {
-                
-                var date = monthInterval.start
-                while date < monthInterval.end {
-                    let components = calendar.dateComponents([.year, .month, .day], from: date)
-                    allDatesToReload.append(components)
-                    date = calendar.date(byAdding: .day, value: 1, to: date) ?? monthInterval.end
-                }
-            }
-        }
-        
-        // Recharger toutes les décorations
-        uiView.reloadDecorations(forDateComponents: allDatesToReload, animated: true)
+        // Forcer un rafraîchissement complet plus agressif
+        context.coordinator.forceReloadDecorations(uiView)
     }
     
     func makeCoordinator() -> Coordinator {
@@ -78,6 +63,41 @@ struct UICalendarViewWrapper: UIViewRepresentable {
         
         init(_ parent: UICalendarViewWrapper) {
             self.parent = parent
+        }
+        
+        func forceReloadDecorations(_ calendarView: UICalendarView) {
+            print("🎯 ForceReloadDecorations called with \(parent.events.count) events")
+            
+            // Calculer une plage plus large de dates à rafraîchir
+            let calendar = Foundation.Calendar.current
+            let today = Date()
+            
+            // Rafraîchir 3 mois avant et après
+            var allDatesToReload: [DateComponents] = []
+            for monthOffset in -3...3 {
+                if let monthDate = calendar.date(byAdding: .month, value: monthOffset, to: today),
+                   let monthInterval = calendar.dateInterval(of: .month, for: monthDate) {
+                    
+                    var date = monthInterval.start
+                    while date < monthInterval.end {
+                        let components = calendar.dateComponents([.year, .month, .day], from: date)
+                        allDatesToReload.append(components)
+                        date = calendar.date(byAdding: .day, value: 1, to: date) ?? monthInterval.end
+                    }
+                }
+            }
+            
+            print("🔄 Reloading \(allDatesToReload.count) dates")
+            
+            // Forcer le rechargement immédiatement
+            DispatchQueue.main.async {
+                calendarView.reloadDecorations(forDateComponents: allDatesToReload, animated: false)
+            }
+            
+            // Puis avec animation dans un délai court
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                calendarView.reloadDecorations(forDateComponents: allDatesToReload, animated: true)
+            }
         }
         
         // MARK: - UICalendarViewDelegate
