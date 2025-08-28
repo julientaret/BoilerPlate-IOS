@@ -10,7 +10,11 @@ import SwiftUI
 /// Vue calendrier mensuelle utilisant UICalendarView natif
 struct MonthlyCalendarView: View {
     
-    @StateObject private var calendarService = CalendarService()
+    @StateObject private var sharedService = SharedCalendarService.shared
+    
+    private var calendarService: CalendarService {
+        sharedService.calendarService
+    }
     @State private var selectedDate = Date()
     @State private var selectedEvent: CalendarEvent?
     @State private var showCreateEventSheet = false

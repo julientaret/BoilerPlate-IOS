@@ -11,7 +11,11 @@ import SwiftUI
 /// Cette vue démontre toutes les fonctionnalités principales du service calendrier
 struct CalendarServiceExample: View {
     
-    @StateObject private var calendarService = CalendarService()
+    @StateObject private var sharedService = SharedCalendarService.shared
+    
+    private var calendarService: CalendarService {
+        sharedService.calendarService
+    }
     @State private var showCreateEventSheet = false
     @State private var selectedDate = Date()
     @State private var searchQuery = ""

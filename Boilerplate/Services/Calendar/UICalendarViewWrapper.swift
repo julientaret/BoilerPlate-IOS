@@ -31,6 +31,8 @@ struct UICalendarViewWrapper: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: UICalendarView, context: Context) {
+        print("🔄 UICalendarView updateUIView called with \(events.count) events")
+        
         // Mise à jour de la date sélectionnée
         if let selection = uiView.selectionBehavior as? UICalendarSelectionSingleDate {
             let newSelectedComponents = Foundation.Calendar.current.dateComponents([.year, .month, .day], from: selectedDate)
@@ -87,6 +89,14 @@ struct UICalendarViewWrapper: UIViewRepresentable {
             
             let eventsForDate = parent.events.filter { event in
                 Foundation.Calendar.current.isDate(event.startDate, inSameDayAs: date)
+            }
+            
+            let formatter = DateFormatter()
+            formatter.dateFormat = "dd/MM"
+            let dateString = formatter.string(from: date)
+            
+            if !eventsForDate.isEmpty {
+                print("🎯 Decoration for \(dateString): \(eventsForDate.count) event(s) - \(eventsForDate.map { $0.title }.joined(separator: ", "))")
             }
             
             if eventsForDate.isEmpty {
