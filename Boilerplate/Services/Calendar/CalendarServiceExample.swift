@@ -126,29 +126,72 @@ struct CalendarServiceExample: View {
     }
     
     private var quickActionsSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Quick Actions")
-                .font(.headline)
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Actions Rapides")
+                .font(.title2)
+                .fontWeight(.bold)
+                .foregroundColor(.primary)
             
-            HStack(spacing: 12) {
-                Button("Create Event") {
+            VStack(spacing: 12) {
+                // Create Event - Action principale
+                Button(action: {
                     showCreateEventSheet = true
+                }) {
+                    CalendarQuickEventCard(
+                        title: "Nouvel Événement",
+                        subtitle: "Créer rapidement",
+                        icon: "plus.circle.fill",
+                        color: .blue,
+                        time: "Créer"
+                    )
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.plain)
                 
-                Button("Today's Events") {
+                // Today's Events
+                Button(action: {
                     Task {
                         _ = await calendarService.getEventsForDay(Date())
                     }
+                }) {
+                    CalendarQuickEventCard(
+                        title: "Événements d'aujourd'hui",
+                        subtitle: "Voir tous les événements du jour",
+                        icon: "calendar.circle.fill",
+                        color: .orange,
+                        time: "Voir"
+                    )
                 }
-                .buttonStyle(.bordered)
+                .buttonStyle(.plain)
                 
-                Button("Upcoming") {
+                // Upcoming Events
+                Button(action: {
                     Task {
                         _ = await calendarService.getUpcomingEvents()
                     }
+                }) {
+                    CalendarQuickEventCard(
+                        title: "Événements à venir",
+                        subtitle: "Prochains événements planifiés",
+                        icon: "clock.circle.fill",
+                        color: .green,
+                        time: "Voir"
+                    )
                 }
-                .buttonStyle(.bordered)
+                .buttonStyle(.plain)
+                
+                // Monthly View
+                NavigationLink {
+                    MonthlyCalendarView()
+                } label: {
+                    CalendarQuickEventCard(
+                        title: "Vue Calendrier Mensuelle",
+                        subtitle: "Interface complète du calendrier",
+                        icon: "calendar.badge.clock",
+                        color: .purple,
+                        time: "Ouvrir"
+                    )
+                }
+                .buttonStyle(.plain)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -223,46 +266,94 @@ struct CalendarServiceExample: View {
     }
     
     private var createEventExamples: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Quick Event Examples")
-                .font(.headline)
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Événements Rapides")
+                .font(.title2)
+                .fontWeight(.bold)
+                .foregroundColor(.primary)
             
-            VStack(spacing: 8) {
-                Button("Create Meeting in 1 Hour") {
+            VStack(spacing: 12) {
+                // Meeting in 1 hour
+                Button(action: {
                     Task {
                         let startDate = Foundation.Calendar.current.date(byAdding: .hour, value: 1, to: Date()) ?? Date()
                         do {
                             _ = try await calendarService.createQuickEvent(
-                                title: "Team Meeting",
+                                title: "Réunion d'équipe",
                                 startDate: startDate,
                                 duration: 3600,
-                                location: "Conference Room A",
-                                notes: "Weekly team sync meeting"
+                                location: "Salle de conférence A",
+                                notes: "Réunion hebdomadaire de l'équipe"
                             )
                             await loadData()
                         } catch {
                             print("Failed to create event: \(error)")
                         }
                     }
+                }) {
+                    CalendarQuickEventCard(
+                        title: "Réunion dans 1h",
+                        subtitle: "Salle de conférence A • 1h",
+                        icon: "person.2.fill",
+                        color: .blue,
+                        time: "1 heure"
+                    )
                 }
-                .buttonStyle(.bordered)
+                .buttonStyle(.plain)
                 
-                Button("Create All-Day Event Tomorrow") {
+                // All-day event tomorrow
+                Button(action: {
                     Task {
                         let tomorrow = Foundation.Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date()
                         do {
                             _ = try await calendarService.createAllDayEvent(
-                                title: "Company Holiday",
+                                title: "Congé d'entreprise",
                                 date: tomorrow,
-                                notes: "All-day company event"
+                                notes: "Événement d'entreprise toute la journée"
                             )
                             await loadData()
                         } catch {
                             print("Failed to create all-day event: \(error)")
                         }
                     }
+                }) {
+                    CalendarQuickEventCard(
+                        title: "Congé demain",
+                        subtitle: "Toute la journée",
+                        icon: "calendar.day.timeline.leading",
+                        color: .green,
+                        time: "Demain"
+                    )
                 }
-                .buttonStyle(.bordered)
+                .buttonStyle(.plain)
+                
+                // Lunch break
+                Button(action: {
+                    Task {
+                        let lunchTime = Foundation.Calendar.current.date(bySettingHour: 12, minute: 30, second: 0, of: Date()) ?? Date()
+                        do {
+                            _ = try await calendarService.createQuickEvent(
+                                title: "Pause déjeuner",
+                                startDate: lunchTime,
+                                duration: 3600,
+                                location: "Restaurant",
+                                notes: "Pause déjeuner d'équipe"
+                            )
+                            await loadData()
+                        } catch {
+                            print("Failed to create lunch event: \(error)")
+                        }
+                    }
+                }) {
+                    CalendarQuickEventCard(
+                        title: "Déjeuner d'équipe",
+                        subtitle: "Restaurant • 1h",
+                        icon: "fork.knife",
+                        color: .orange,
+                        time: "12h30"
+                    )
+                }
+                .buttonStyle(.plain)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -461,6 +552,78 @@ extension UIColor {
         }
         
         return nil
+    }
+}
+
+// MARK: - Calendar Quick Event Card
+
+struct CalendarQuickEventCard: View {
+    let title: String
+    let subtitle: String
+    let icon: String
+    let color: Color
+    let time: String
+    
+    var body: some View {
+        HStack(spacing: 16) {
+            // Icon avec background
+            Image(systemName: icon)
+                .font(.system(size: 22, weight: .medium))
+                .foregroundColor(.white)
+                .frame(width: 44, height: 44)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(
+                            LinearGradient(
+                                colors: [color, color.opacity(0.7)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                )
+                .shadow(color: color.opacity(0.3), radius: 4, x: 0, y: 2)
+            
+            // Contenu
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    Text(title)
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.primary)
+                    
+                    Spacer()
+                    
+                    Text(time)
+                        .font(.caption)
+                        .fontWeight(.medium)
+                        .foregroundColor(color)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(color.opacity(0.1))
+                        .clipShape(Capsule())
+                }
+                
+                Text(subtitle)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.leading)
+            }
+            
+            // Arrow
+            Image(systemName: "plus.circle.fill")
+                .font(.title3)
+                .foregroundColor(color)
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(.secondarySystemBackground))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(Color(.separator), lineWidth: 0.5)
+                )
+        )
+        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
     }
 }
 

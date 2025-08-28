@@ -55,28 +55,56 @@ struct MonthlyCalendarView: View {
     private var monthNavigationHeader: some View {
         HStack {
             Button(action: previousMonth) {
-                Image(systemName: "chevron.left")
+                Image(systemName: "chevron.left.circle.fill")
                     .font(.title2)
                     .foregroundColor(.blue)
+                    .background(Color.blue.opacity(0.1))
+                    .clipShape(Circle())
             }
+            .buttonStyle(.plain)
             
             Spacer()
             
-            Text(dateFormatter.string(from: currentMonth))
-                .font(.title2)
-                .fontWeight(.semibold)
+            VStack(spacing: 2) {
+                Text(dateFormatter.string(from: currentMonth).capitalized)
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundColor(.primary)
+                
+                if calendar.isDate(currentMonth, equalTo: Date(), toGranularity: .month) {
+                    Text("Aujourd'hui")
+                        .font(.caption)
+                        .foregroundColor(.blue)
+                        .fontWeight(.medium)
+                }
+            }
             
             Spacer()
             
             Button(action: nextMonth) {
-                Image(systemName: "chevron.right")
+                Image(systemName: "chevron.right.circle.fill")
                     .font(.title2)
                     .foregroundColor(.blue)
+                    .background(Color.blue.opacity(0.1))
+                    .clipShape(Circle())
             }
+            .buttonStyle(.plain)
         }
-        .padding(.horizontal)
-        .padding(.vertical, 12)
-        .background(.regularMaterial)
+        .padding(.horizontal, 20)
+        .padding(.vertical, 16)
+        .background(
+            LinearGradient(
+                colors: [Color(.systemBackground), Color(.systemBackground).opacity(0.95)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        )
+        .overlay(
+            Rectangle()
+                .fill(Color(.separator))
+                .frame(height: 0.5),
+            alignment: .bottom
+        )
     }
     
     // MARK: - Weekday Headers
@@ -85,22 +113,22 @@ struct MonthlyCalendarView: View {
         HStack(spacing: 0) {
             ForEach(calendar.weekdaySymbols.indices, id: \.self) { index in
                 let adjustedIndex = (index + calendar.firstWeekday - 1) % 7
-                Text(calendar.veryShortWeekdaySymbols[adjustedIndex])
-                    .font(.caption)
-                    .fontWeight(.medium)
+                Text(calendar.veryShortWeekdaySymbols[adjustedIndex].uppercased())
+                    .font(.caption2)
+                    .fontWeight(.semibold)
                     .foregroundColor(.secondary)
                     .frame(maxWidth: .infinity)
             }
         }
         .padding(.horizontal)
-        .padding(.vertical, 8)
-        .background(.regularMaterial)
+        .padding(.vertical, 12)
+        .background(Color(.secondarySystemBackground))
     }
     
     // MARK: - Month Grid
     
     private var monthGrid: some View {
-        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 7), spacing: 1) {
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 7), spacing: 0.5) {
             ForEach(monthDays, id: \.self) { date in
                 DayCell(
                     date: date,
@@ -111,11 +139,23 @@ struct MonthlyCalendarView: View {
                         selectedEvent = event
                     }
                 )
-                .frame(height: 80)
+                .frame(height: 85)
                 .background(dayBackgroundColor(for: date))
+                .overlay(
+                    Rectangle()
+                        .fill(Color(.separator))
+                        .frame(width: 0.5),
+                    alignment: .trailing
+                )
+                .overlay(
+                    Rectangle()
+                        .fill(Color(.separator))
+                        .frame(height: 0.5),
+                    alignment: .bottom
+                )
             }
         }
-        .background(.regularMaterial)
+        .background(Color(.systemBackground))
     }
     
     // MARK: - Helper Methods
@@ -160,11 +200,11 @@ struct MonthlyCalendarView: View {
     
     private func dayBackgroundColor(for date: Date) -> Color {
         if calendar.isDate(date, inSameDayAs: selectedDate) {
-            return .blue.opacity(0.1)
+            return .blue.opacity(0.15)
         } else if calendar.isDateInToday(date) {
             return .orange.opacity(0.1)
         } else {
-            return .clear
+            return Color(.systemBackground)
         }
     }
     
@@ -223,18 +263,34 @@ struct DayCell: View {
     private let calendar = Foundation.Calendar.current
     
     var body: some View {
-        VStack(spacing: 2) {
-            // Numéro du jour
+        VStack(spacing: 3) {
+            // Numéro du jour avec cercle si aujourd'hui
             HStack {
-                Text("\(calendar.component(.day, from: date))")
-                    .font(.system(size: 14, weight: isToday ? .bold : .medium))
-                    .foregroundColor(dayTextColor)
+                if isToday {
+                    Text("\(calendar.component(.day, from: date))")
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundColor(.white)
+                        .frame(width: 28, height: 28)
+                        .background(Color.orange)
+                        .clipShape(Circle())
+                } else if isSelected {
+                    Text("\(calendar.component(.day, from: date))")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.white)
+                        .frame(width: 28, height: 28)
+                        .background(Color.blue)
+                        .clipShape(Circle())
+                } else {
+                    Text("\(calendar.component(.day, from: date))")
+                        .font(.system(size: 16, weight: isInCurrentMonth ? .medium : .light))
+                        .foregroundColor(dayTextColor)
+                }
                 
                 Spacer()
             }
             
             // Événements (max 3 affichés)
-            VStack(spacing: 1) {
+            VStack(spacing: 2) {
                 ForEach(Array(events.prefix(3).enumerated()), id: \.element.id) { index, event in
                     EventIndicator(event: event)
                         .onTapGesture {
@@ -245,13 +301,18 @@ struct DayCell: View {
                 if events.count > 3 {
                     Text("+\(events.count - 3)")
                         .font(.caption2)
-                        .foregroundColor(.secondary)
+                        .fontWeight(.medium)
+                        .foregroundColor(.blue)
+                        .padding(.horizontal, 4)
+                        .padding(.vertical, 1)
+                        .background(Color.blue.opacity(0.1))
+                        .cornerRadius(3)
                 }
             }
             
-            Spacer()
+            Spacer(minLength: 0)
         }
-        .padding(4)
+        .padding(6)
         .contentShape(Rectangle())
         .onTapGesture {
             selectedDate = date
@@ -289,24 +350,32 @@ struct EventIndicator: View {
     let event: CalendarEvent
     
     var body: some View {
-        HStack(spacing: 2) {
-            // Point de couleur
-            Circle()
+        HStack(spacing: 3) {
+            // Point de couleur plus visible
+            RoundedRectangle(cornerRadius: 1)
                 .fill(eventColor)
-                .frame(width: 4, height: 4)
+                .frame(width: 3, height: 10)
             
             // Titre de l'événement (tronqué)
             Text(event.title)
                 .font(.caption2)
+                .fontWeight(.medium)
                 .lineLimit(1)
                 .truncationMode(.tail)
+                .foregroundColor(.primary)
             
             Spacer(minLength: 0)
         }
-        .padding(.horizontal, 2)
-        .padding(.vertical, 1)
-        .background(eventColor.opacity(0.15))
-        .cornerRadius(2)
+        .padding(.horizontal, 4)
+        .padding(.vertical, 2)
+        .background(
+            RoundedRectangle(cornerRadius: 4)
+                .fill(eventColor.opacity(0.12))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 4)
+                        .stroke(eventColor.opacity(0.3), lineWidth: 0.5)
+                )
+        )
     }
     
     private var eventColor: Color {

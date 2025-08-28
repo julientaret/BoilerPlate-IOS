@@ -8,12 +8,15 @@
 import Foundation
 import EventKit
 import Combine
+import UIKit
 
 @MainActor
 class CalendarService: ObservableObject {
     
     // MARK: - Properties
     private let eventStore = EKEventStore()
+    private var boilerplateCalendar: EKCalendar?
+    private let boilerplateCalendarTitle = "Boilerplate Calendar"
     
     @Published var authorizationStatus: CalendarAuthorizationStatus = .notDetermined
     @Published var calendars: [Calendar] = []
@@ -91,8 +94,15 @@ class CalendarService: ObservableObject {
         isLoading = true
         defer { isLoading = false }
         
-        let ekCalendars = eventStore.calendars(for: .event)
-        calendars = ekCalendars.map { Calendar(from: $0) }
+        // Créer ou récupérer le calendrier Boilerplate
+        await ensureBoilerplateCalendar()
+        
+        // Ne montrer que le calendrier Boilerplate dans la liste
+        if let boilerplateCalendar = boilerplateCalendar {
+            calendars = [Calendar(from: boilerplateCalendar)]
+        } else {
+            calendars = []
+        }
     }
     
     func getDefaultCalendar() -> EKCalendar? {
@@ -114,10 +124,19 @@ class CalendarService: ObservableObject {
         isLoading = true
         defer { isLoading = false }
         
+        // S'assurer que le calendrier Boilerplate existe
+        await ensureBoilerplateCalendar()
+        
+        // Charger uniquement les événements du calendrier Boilerplate
+        guard let boilerplateCalendar = boilerplateCalendar else {
+            events = []
+            return
+        }
+        
         let predicate = eventStore.predicateForEvents(
             withStart: startDate,
             end: endDate,
-            calendars: calendars
+            calendars: [boilerplateCalendar]
         )
         
         let ekEvents = eventStore.events(matching: predicate)
@@ -127,6 +146,13 @@ class CalendarService: ObservableObject {
     func createEvent(_ event: CalendarEvent) async throws -> String {
         guard authorizationStatus == .authorized else {
             throw CalendarError.permissionDenied
+        }
+        
+        // S'assurer que le calendrier Boilerplate existe
+        await ensureBoilerplateCalendar()
+        
+        guard let boilerplateCalendar = boilerplateCalendar else {
+            throw CalendarError.calendarNotFound
         }
         
         let ekEvent = EKEvent(eventStore: eventStore)
@@ -139,13 +165,8 @@ class CalendarService: ObservableObject {
         ekEvent.isAllDay = event.isAllDay
         ekEvent.url = event.url
         
-        // Set calendar
-        if let calendarId = event.calendarIdentifier,
-           let calendar = getCalendar(by: calendarId) {
-            ekEvent.calendar = calendar
-        } else {
-            ekEvent.calendar = getDefaultCalendar()
-        }
+        // Toujours utiliser le calendrier Boilerplate
+        ekEvent.calendar = boilerplateCalendar
         
         // Add alert if specified
         if let alertOffset = event.alertOffset {
@@ -218,10 +239,16 @@ class CalendarService: ObservableObject {
             return []
         }
         
+        await ensureBoilerplateCalendar()
+        
+        guard let boilerplateCalendar = boilerplateCalendar else {
+            return []
+        }
+        
         let predicate = eventStore.predicateForEvents(
             withStart: startDate,
             end: endDate,
-            calendars: nil
+            calendars: [boilerplateCalendar]
         )
         
         let ekEvents = eventStore.events(matching: predicate)
@@ -250,6 +277,48 @@ class CalendarService: ObservableObject {
         
         await loadEvents(from: now, to: futureDate)
         return Array(events.prefix(limit))
+    }
+    
+    // MARK: - Boilerplate Calendar Management
+    
+    private func ensureBoilerplateCalendar() async {
+        // Chercher d'abord si le calendrier existe déjà
+        let existingCalendars = eventStore.calendars(for: .event)
+        
+        if let existingCalendar = existingCalendars.first(where: { $0.title == boilerplateCalendarTitle }) {
+            boilerplateCalendar = existingCalendar
+            return
+        }
+        
+        // Créer le calendrier Boilerplate s'il n'existe pas
+        await createBoilerplateCalendar()
+    }
+    
+    private func createBoilerplateCalendar() async {
+        let newCalendar = EKCalendar(for: .event, eventStore: eventStore)
+        newCalendar.title = boilerplateCalendarTitle
+        
+        // Utiliser la source locale par défaut
+        if let localSource = eventStore.sources.first(where: { $0.sourceType == .local }) {
+            newCalendar.source = localSource
+        } else if let defaultSource = eventStore.defaultCalendarForNewEvents?.source {
+            newCalendar.source = defaultSource
+        } else {
+            // Fallback sur la première source disponible
+            newCalendar.source = eventStore.sources.first
+        }
+        
+        // Définir une couleur distinctive pour le calendrier Boilerplate
+        newCalendar.cgColor = UIColor.systemBlue.cgColor
+        
+        do {
+            try eventStore.saveCalendar(newCalendar, commit: true)
+            boilerplateCalendar = newCalendar
+            print("✅ Calendrier Boilerplate créé avec succès")
+        } catch {
+            print("❌ Erreur lors de la création du calendrier Boilerplate: \(error)")
+            errorMessage = "Impossible de créer le calendrier Boilerplate: \(error.localizedDescription)"
+        }
     }
     
     // MARK: - Helper Methods

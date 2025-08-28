@@ -171,31 +171,52 @@ struct UILibraryShowcase: View {
                     }
                     
                     // MARK: - Services Section
-                    showcaseSection(title: "Services") {
-                        VStack(spacing: UITheme.Spacing.md) {
-                            NavigationLink("Calendar Service Demo") {
-                                CalendarServiceExample()
+                    showcaseSection(title: "Services & Calendar") {
+                        VStack(spacing: UITheme.Spacing.lg) {
+                            // Main Calendar Views
+                            VStack(spacing: UITheme.Spacing.md) {
+                                NavigationLink {
+                                    MonthlyCalendarView()
+                                } label: {
+                                    ServiceCardView(
+                                        title: "Vue Calendrier Mensuelle",
+                                        description: "Interface calendrier inspirée d'Apple",
+                                        icon: "calendar",
+                                        color: .blue
+                                    )
+                                }
+                                
+                                NavigationLink {
+                                    CalendarServiceExample()
+                                } label: {
+                                    ServiceCardView(
+                                        title: "Gestion d'Événements",
+                                        description: "Créer, modifier et organiser vos événements",
+                                        icon: "plus.circle.fill",
+                                        color: .green
+                                    )
+                                }
                             }
-                            .buttonStyle(.bordered)
-                            .frame(maxWidth: .infinity)
                             
-                            NavigationLink("Calendar Permission Test") {
-                                CalendarPermissionTest()
+                            // Debug & Tests (collapsible)
+                            DisclosureGroup("Outils de développement") {
+                                VStack(spacing: UITheme.Spacing.sm) {
+                                    NavigationLink("Test des Permissions") {
+                                        CalendarPermissionTest()
+                                    }
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                    
+                                    NavigationLink("Test Alternatif") {
+                                        CalendarTestAlternative()
+                                    }
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                }
+                                .padding(.top, UITheme.Spacing.sm)
                             }
-                            .buttonStyle(.bordered)
-                            .frame(maxWidth: .infinity)
-                            
-                            NavigationLink("Calendar Test Alternative") {
-                                CalendarTestAlternative()
-                            }
-                            .buttonStyle(.bordered)
-                            .frame(maxWidth: .infinity)
-                            
-                            NavigationLink("Monthly Calendar View") {
-                                MonthlyCalendarView()
-                            }
-                            .buttonStyle(.borderedProminent)
-                            .frame(maxWidth: .infinity)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
                         }
                     }
                     
@@ -354,6 +375,65 @@ struct UILibraryShowcase: View {
                 }
             }
         }
+    }
+}
+
+// MARK: - Service Card View
+struct ServiceCardView: View {
+    let title: String
+    let description: String
+    let icon: String
+    let color: Color
+    
+    var body: some View {
+        HStack(spacing: UITheme.Spacing.md) {
+            // Icon
+            Image(systemName: icon)
+                .font(.system(size: 24, weight: .medium))
+                .foregroundColor(.white)
+                .frame(width: 50, height: 50)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(
+                            LinearGradient(
+                                colors: [color, color.opacity(0.7)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                )
+                .shadow(color: color.opacity(0.3), radius: 4, x: 0, y: 2)
+            
+            // Content
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(UITheme.Typography.headline)
+                    .foregroundColor(Color(.label))
+                    .multilineTextAlignment(.leading)
+                
+                Text(description)
+                    .font(UITheme.Typography.caption)
+                    .foregroundColor(Color(.secondaryLabel))
+                    .multilineTextAlignment(.leading)
+            }
+            
+            Spacer()
+            
+            // Arrow
+            Image(systemName: "chevron.right")
+                .font(.caption)
+                .foregroundColor(.secondary)
+        }
+        .padding(UITheme.Spacing.md)
+        .background(
+            RoundedRectangle(cornerRadius: UITheme.CornerRadius.large)
+                .fill(Color(.secondarySystemBackground))
+                .overlay(
+                    RoundedRectangle(cornerRadius: UITheme.CornerRadius.large)
+                        .stroke(Color(.separator), lineWidth: 0.5)
+                )
+        )
+        .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
     }
 }
 
