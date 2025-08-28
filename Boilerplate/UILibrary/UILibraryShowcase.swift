@@ -198,17 +198,11 @@ struct UILibraryShowcase: View {
                                 }
                             }
                             
-                            // Debug & Tests (collapsible)
-                            DisclosureGroup("Outils de développement") {
+                            // Calendrier
+                            DisclosureGroup("Calendrier") {
                                 VStack(spacing: UITheme.Spacing.sm) {
-                                    NavigationLink("Test des Permissions") {
-                                        CalendarPermissionTest()
-                                    }
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                    
-                                    NavigationLink("Test Alternatif") {
-                                        CalendarTestAlternative()
+                                    NavigationLink("Calendrier Principal") {
+                                        MonthlyCalendarView()
                                     }
                                     .font(.caption)
                                     .foregroundColor(.secondary)

@@ -182,6 +182,15 @@ class CalendarService: ObservableObject {
         
         do {
             try eventStore.save(ekEvent, span: .thisEvent)
+            
+            // Rafraîchir automatiquement les événements après création
+            let calendar = Foundation.Calendar.current
+            let now = Date()
+            let startDate = calendar.date(byAdding: .month, value: -1, to: now) ?? now
+            let endDate = calendar.date(byAdding: .month, value: 2, to: now) ?? now
+            
+            await loadEvents(from: startDate, to: endDate)
+            
             return ekEvent.eventIdentifier ?? ""
         } catch {
             throw CalendarError.saveFailed(error.localizedDescription)

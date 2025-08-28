@@ -10,7 +10,7 @@ import EventKit
 import UIKit
 
 // MARK: - Calendar Event Model
-struct CalendarEvent: Identifiable, Codable {
+struct CalendarEvent: Identifiable, Codable, Equatable {
     let id: String
     let title: String
     let description: String?
@@ -110,7 +110,7 @@ enum CalendarType: String, CaseIterable {
 }
 
 // MARK: - Recurrence Rule
-struct CalendarRecurrenceRule: Codable {
+struct CalendarRecurrenceRule: Codable, Equatable {
     let frequency: RecurrenceFrequency
     let interval: Int
     let daysOfWeek: [Int]?

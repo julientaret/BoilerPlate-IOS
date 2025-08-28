@@ -43,7 +43,14 @@ struct CalendarServiceExample: View {
             }
         }
         .task {
-            await calendarService.loadCalendars()
+            await loadData()
+        }
+        .onAppear {
+            Task {
+                if calendarService.authorizationStatus == .authorized {
+                    await loadData()
+                }
+            }
         }
     }
     
@@ -364,10 +371,12 @@ struct CalendarServiceExample: View {
     // MARK: - Helper Methods
     
     private func loadData() async {
+        print("🔄 CalendarServiceExample: Loading data...")
         await calendarService.loadCalendars()
         let now = Date()
         let futureDate = Foundation.Calendar.current.date(byAdding: .month, value: 1, to: now) ?? now
         await calendarService.loadEvents(from: now, to: futureDate)
+        print("✅ CalendarServiceExample: Data loaded, \(calendarService.events.count) events found")
     }
 }
 

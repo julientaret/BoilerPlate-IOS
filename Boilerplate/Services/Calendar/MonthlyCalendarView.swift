@@ -7,382 +7,256 @@
 
 import SwiftUI
 
-/// Vue calendrier mensuelle inspirée de l'app Calendrier d'Apple
+/// Vue calendrier mensuelle utilisant UICalendarView natif
 struct MonthlyCalendarView: View {
     
     @StateObject private var calendarService = CalendarService()
     @State private var selectedDate = Date()
-    @State private var currentMonth = Date()
-    @State private var monthEvents: [CalendarEvent] = []
-    @State private var showEventDetail = false
     @State private var selectedEvent: CalendarEvent?
-    
-    private let calendar = Foundation.Calendar.current
-    private let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMMM yyyy"
-        formatter.locale = Locale(identifier: "fr_FR")
-        return formatter
-    }()
+    @State private var showCreateEventSheet = false
     
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                // Header avec navigation mois
-                monthNavigationHeader
-                
-                // Jours de la semaine
-                weekdayHeaders
-                
-                // Grille des jours du mois
-                monthGrid
+                // UICalendarView natif
+                UICalendarViewWrapper(
+                    selectedDate: $selectedDate,
+                    events: calendarService.events,
+                    onDateSelected: { date in
+                        selectedDate = date
+                    },
+                    onEventTap: { event in
+                        selectedEvent = event
+                    }
+                )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 
                 Spacer()
             }
             .navigationTitle("Calendrier")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        showCreateEventSheet = true
+                    }) {
+                        Image(systemName: "plus")
+                            .font(.title2)
+                            .foregroundColor(.blue)
+                    }
+                }
+            }
             .task {
                 await loadCalendarData()
+            }
+            .onAppear {
+                Task {
+                    print("👀 View appeared, auth status: \(calendarService.authorizationStatus)")
+                    // Rafraîchir uniquement si on revient sur la vue avec autorisation
+                    if calendarService.authorizationStatus == .authorized {
+                        print("🔄 Refreshing on appear...")
+                        await refreshEvents()
+                    }
+                }
             }
             .sheet(item: $selectedEvent) { event in
                 EventDetailView(event: event)
             }
-        }
-    }
-    
-    // MARK: - Month Navigation Header
-    
-    private var monthNavigationHeader: some View {
-        HStack {
-            Button(action: previousMonth) {
-                Image(systemName: "chevron.left.circle.fill")
-                    .font(.title2)
-                    .foregroundColor(.blue)
-                    .background(Color.blue.opacity(0.1))
-                    .clipShape(Circle())
-            }
-            .buttonStyle(.plain)
-            
-            Spacer()
-            
-            VStack(spacing: 2) {
-                Text(dateFormatter.string(from: currentMonth).capitalized)
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .foregroundColor(.primary)
-                
-                if calendar.isDate(currentMonth, equalTo: Date(), toGranularity: .month) {
-                    Text("Aujourd'hui")
-                        .font(.caption)
-                        .foregroundColor(.blue)
-                        .fontWeight(.medium)
+            .sheet(isPresented: $showCreateEventSheet) {
+                QuickCreateEventView(calendarService: calendarService, selectedDate: selectedDate) {
+                    await refreshEvents()
                 }
             }
-            
-            Spacer()
-            
-            Button(action: nextMonth) {
-                Image(systemName: "chevron.right.circle.fill")
-                    .font(.title2)
-                    .foregroundColor(.blue)
-                    .background(Color.blue.opacity(0.1))
-                    .clipShape(Circle())
+            .onChange(of: selectedDate) { _, newDate in
+                Task {
+                    await loadEventsForDate(newDate)
+                }
             }
-            .buttonStyle(.plain)
-        }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 16)
-        .background(
-            LinearGradient(
-                colors: [Color(.systemBackground), Color(.systemBackground).opacity(0.95)],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-        )
-        .overlay(
-            Rectangle()
-                .fill(Color(.separator))
-                .frame(height: 0.5),
-            alignment: .bottom
-        )
-    }
-    
-    // MARK: - Weekday Headers
-    
-    private var weekdayHeaders: some View {
-        HStack(spacing: 0) {
-            ForEach(calendar.weekdaySymbols.indices, id: \.self) { index in
-                let adjustedIndex = (index + calendar.firstWeekday - 1) % 7
-                Text(calendar.veryShortWeekdaySymbols[adjustedIndex].uppercased())
-                    .font(.caption2)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.secondary)
-                    .frame(maxWidth: .infinity)
+            .onChange(of: calendarService.events) { _, _ in
+                // Force le rafraîchissement du UICalendarView quand les événements changent
+            }
+            .refreshable {
+                await refreshEvents()
             }
         }
-        .padding(.horizontal)
-        .padding(.vertical, 12)
-        .background(Color(.secondarySystemBackground))
-    }
-    
-    // MARK: - Month Grid
-    
-    private var monthGrid: some View {
-        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 7), spacing: 0.5) {
-            ForEach(monthDays, id: \.self) { date in
-                DayCell(
-                    date: date,
-                    currentMonth: currentMonth,
-                    selectedDate: $selectedDate,
-                    events: eventsForDate(date),
-                    onEventTap: { event in
-                        selectedEvent = event
-                    }
-                )
-                .frame(height: 85)
-                .background(dayBackgroundColor(for: date))
-                .overlay(
-                    Rectangle()
-                        .fill(Color(.separator))
-                        .frame(width: 0.5),
-                    alignment: .trailing
-                )
-                .overlay(
-                    Rectangle()
-                        .fill(Color(.separator))
-                        .frame(height: 0.5),
-                    alignment: .bottom
-                )
-            }
-        }
-        .background(Color(.systemBackground))
     }
     
     // MARK: - Helper Methods
     
-    private var monthDays: [Date] {
-        guard let monthInterval = calendar.dateInterval(of: .month, for: currentMonth) else {
-            return []
-        }
-        
-        let firstOfMonth = monthInterval.start
-        let firstWeekday = calendar.component(.weekday, from: firstOfMonth)
-        let numberOfDaysToShowFromPreviousMonth = (firstWeekday + 7 - calendar.firstWeekday) % 7
-        
-        guard let startDate = calendar.date(
-            byAdding: .day,
-            value: -numberOfDaysToShowFromPreviousMonth,
-            to: firstOfMonth
-        ) else {
-            return []
-        }
-        
-        var days: [Date] = []
-        var currentDate = startDate
-        
-        // Générer 42 jours (6 semaines)
-        for _ in 0..<42 {
-            days.append(currentDate)
-            guard let nextDay = calendar.date(byAdding: .day, value: 1, to: currentDate) else {
-                break
-            }
-            currentDate = nextDay
-        }
-        
-        return days
-    }
-    
-    private func eventsForDate(_ date: Date) -> [CalendarEvent] {
-        return monthEvents.filter { event in
-            calendar.isDate(event.startDate, inSameDayAs: date)
-        }
-    }
-    
-    private func dayBackgroundColor(for date: Date) -> Color {
-        if calendar.isDate(date, inSameDayAs: selectedDate) {
-            return .blue.opacity(0.15)
-        } else if calendar.isDateInToday(date) {
-            return .orange.opacity(0.1)
-        } else {
-            return Color(.systemBackground)
-        }
-    }
-    
-    private func previousMonth() {
-        withAnimation(.easeInOut(duration: 0.3)) {
-            currentMonth = calendar.date(byAdding: .month, value: -1, to: currentMonth) ?? currentMonth
-        }
-        Task {
-            await loadEventsForMonth()
-        }
-    }
-    
-    private func nextMonth() {
-        withAnimation(.easeInOut(duration: 0.3)) {
-            currentMonth = calendar.date(byAdding: .month, value: 1, to: currentMonth) ?? currentMonth
-        }
-        Task {
-            await loadEventsForMonth()
-        }
-    }
-    
     private func loadCalendarData() async {
+        print("🚀 Loading calendar data...")
+        print("📋 Auth status: \(calendarService.authorizationStatus)")
+        
         if calendarService.authorizationStatus != .authorized {
+            print("🔐 Requesting calendar access...")
             let granted = await calendarService.requestCalendarAccess()
             if !granted {
+                print("❌ Calendar access denied")
                 return
             }
+            print("✅ Calendar access granted")
         }
         
-        await loadEventsForMonth()
+        print("📅 Loading initial events...")
+        await refreshEvents()
+        print("✅ Calendar data loaded with \(calendarService.events.count) events")
     }
     
-    private func loadEventsForMonth() async {
-        guard let monthInterval = calendar.dateInterval(of: .month, for: currentMonth) else {
-            return
-        }
+    private func loadEventsForDate(_ date: Date) async {
+        let calendar = Foundation.Calendar.current
         
-        await calendarService.loadEvents(
-            from: monthInterval.start,
-            to: monthInterval.end
-        )
+        // Charger une plage plus large autour de la date sélectionnée
+        let startDate = calendar.date(byAdding: .month, value: -1, to: date) ?? date
+        let endDate = calendar.date(byAdding: .month, value: 2, to: date) ?? date
         
-        monthEvents = calendarService.events
+        await calendarService.loadEvents(from: startDate, to: endDate)
+        
+        print("📅 Events loaded for date range: \(calendarService.events.count) events")
+    }
+    
+    private func refreshEvents() async {
+        let calendar = Foundation.Calendar.current
+        let now = Date()
+        
+        // Charger une plage plus large : 3 mois autour de la date actuelle
+        let startDate = calendar.date(byAdding: .month, value: -1, to: now) ?? now
+        let endDate = calendar.date(byAdding: .month, value: 2, to: now) ?? now
+        
+        await calendarService.loadEvents(from: startDate, to: endDate)
+        
+        print("🔄 Events refreshed: \(calendarService.events.count) events loaded")
     }
 }
 
-// MARK: - Day Cell
+// MARK: - Quick Create Event View
 
-struct DayCell: View {
-    let date: Date
-    let currentMonth: Date
-    @Binding var selectedDate: Date
-    let events: [CalendarEvent]
-    let onEventTap: (CalendarEvent) -> Void
+struct QuickCreateEventView: View {
+    let calendarService: CalendarService
+    let selectedDate: Date
+    let onEventCreated: () async -> Void
     
-    private let calendar = Foundation.Calendar.current
+    @Environment(\.dismiss) private var dismiss
+    
+    @State private var title = ""
+    @State private var description = ""
+    @State private var startDate: Date
+    @State private var endDate: Date
+    @State private var location = ""
+    @State private var isAllDay = false
+    @State private var isCreating = false
+    
+    init(calendarService: CalendarService, selectedDate: Date, onEventCreated: @escaping () async -> Void) {
+        self.calendarService = calendarService
+        self.selectedDate = selectedDate
+        self.onEventCreated = onEventCreated
+        
+        let calendar = Foundation.Calendar.current
+        let startOfDay = calendar.startOfDay(for: selectedDate)
+        let defaultStart = calendar.date(byAdding: .hour, value: 9, to: startOfDay) ?? selectedDate
+        
+        _startDate = State(initialValue: defaultStart)
+        _endDate = State(initialValue: defaultStart.addingTimeInterval(3600)) // +1h
+    }
     
     var body: some View {
-        VStack(spacing: 3) {
-            // Numéro du jour avec cercle si aujourd'hui
-            HStack {
-                if isToday {
-                    Text("\(calendar.component(.day, from: date))")
-                        .font(.system(size: 16, weight: .bold))
-                        .foregroundColor(.white)
-                        .frame(width: 28, height: 28)
-                        .background(Color.orange)
-                        .clipShape(Circle())
-                } else if isSelected {
-                    Text("\(calendar.component(.day, from: date))")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.white)
-                        .frame(width: 28, height: 28)
-                        .background(Color.blue)
-                        .clipShape(Circle())
-                } else {
-                    Text("\(calendar.component(.day, from: date))")
-                        .font(.system(size: 16, weight: isInCurrentMonth ? .medium : .light))
-                        .foregroundColor(dayTextColor)
+        NavigationView {
+            Form {
+                Section("Détails de l'événement") {
+                    TextField("Titre *", text: $title)
+                        .textInputAutocapitalization(.words)
+                    
+                    TextField("Description", text: $description, axis: .vertical)
+                        .lineLimit(3...6)
+                    
+                    TextField("Lieu", text: $location)
+                        .textInputAutocapitalization(.words)
+                    
+                    Toggle("Toute la journée", isOn: $isAllDay)
                 }
                 
-                Spacer()
+                Section("Date et heure") {
+                    DatePicker(
+                        "Début", 
+                        selection: $startDate, 
+                        displayedComponents: isAllDay ? [.date] : [.date, .hourAndMinute]
+                    )
+                    
+                    if !isAllDay {
+                        DatePicker(
+                            "Fin", 
+                            selection: $endDate, 
+                            displayedComponents: [.date, .hourAndMinute]
+                        )
+                    }
+                }
             }
-            
-            // Événements (max 3 affichés)
-            VStack(spacing: 2) {
-                ForEach(Array(events.prefix(3).enumerated()), id: \.element.id) { index, event in
-                    EventIndicator(event: event)
-                        .onTapGesture {
-                            onEventTap(event)
+            .navigationTitle("Nouvel événement")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Annuler") {
+                        dismiss()
+                    }
+                    .disabled(isCreating)
+                }
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Enregistrer") {
+                        Task {
+                            await createEvent()
                         }
-                }
-                
-                if events.count > 3 {
-                    Text("+\(events.count - 3)")
-                        .font(.caption2)
-                        .fontWeight(.medium)
-                        .foregroundColor(.blue)
-                        .padding(.horizontal, 4)
-                        .padding(.vertical, 1)
-                        .background(Color.blue.opacity(0.1))
-                        .cornerRadius(3)
+                    }
+                    .disabled(title.isEmpty || isCreating)
+                    .overlay {
+                        if isCreating {
+                            ProgressView()
+                                .scaleEffect(0.8)
+                        }
+                    }
                 }
             }
-            
-            Spacer(minLength: 0)
-        }
-        .padding(6)
-        .contentShape(Rectangle())
-        .onTapGesture {
-            selectedDate = date
+            .onChange(of: startDate) { _, newStartDate in
+                if !isAllDay && endDate <= newStartDate {
+                    endDate = newStartDate.addingTimeInterval(3600) // +1h
+                }
+            }
         }
     }
     
-    private var isToday: Bool {
-        calendar.isDateInToday(date)
-    }
-    
-    private var isInCurrentMonth: Bool {
-        calendar.isDate(date, equalTo: currentMonth, toGranularity: .month)
-    }
-    
-    private var isSelected: Bool {
-        calendar.isDate(date, inSameDayAs: selectedDate)
-    }
-    
-    private var dayTextColor: Color {
-        if isToday {
-            return .orange
-        } else if !isInCurrentMonth {
-            return .secondary
-        } else if isSelected {
-            return .blue
+    private func createEvent() async {
+        isCreating = true
+        defer { isCreating = false }
+        
+        let finalEndDate: Date
+        if isAllDay {
+            let calendar = Foundation.Calendar.current
+            let startOfDay = calendar.startOfDay(for: startDate)
+            finalEndDate = calendar.date(byAdding: .day, value: 1, to: startOfDay) ?? endDate
         } else {
-            return .primary
+            finalEndDate = endDate
         }
-    }
-}
-
-// MARK: - Event Indicator
-
-struct EventIndicator: View {
-    let event: CalendarEvent
-    
-    var body: some View {
-        HStack(spacing: 3) {
-            // Point de couleur plus visible
-            RoundedRectangle(cornerRadius: 1)
-                .fill(eventColor)
-                .frame(width: 3, height: 10)
-            
-            // Titre de l'événement (tronqué)
-            Text(event.title)
-                .font(.caption2)
-                .fontWeight(.medium)
-                .lineLimit(1)
-                .truncationMode(.tail)
-                .foregroundColor(.primary)
-            
-            Spacer(minLength: 0)
-        }
-        .padding(.horizontal, 4)
-        .padding(.vertical, 2)
-        .background(
-            RoundedRectangle(cornerRadius: 4)
-                .fill(eventColor.opacity(0.12))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 4)
-                        .stroke(eventColor.opacity(0.3), lineWidth: 0.5)
-                )
+        
+        let event = CalendarEvent(
+            title: title.trimmingCharacters(in: .whitespacesAndNewlines),
+            description: description.isEmpty ? nil : description.trimmingCharacters(in: .whitespacesAndNewlines),
+            startDate: isAllDay ? Foundation.Calendar.current.startOfDay(for: startDate) : startDate,
+            endDate: finalEndDate,
+            location: location.isEmpty ? nil : location.trimmingCharacters(in: .whitespacesAndNewlines),
+            isAllDay: isAllDay
         )
-    }
-    
-    private var eventColor: Color {
-        // Couleurs basées sur le titre pour une cohérence visuelle
-        let hash = event.title.hash
-        let colors: [Color] = [.blue, .green, .orange, .red, .purple, .pink, .yellow, .cyan]
-        return colors[abs(hash) % colors.count]
+        
+        do {
+            let eventId = try await calendarService.createEvent(event)
+            print("✅ Event created successfully with ID: \(eventId)")
+            print("📝 Event title: \(event.title)")
+            print("📅 Event date: \(event.startDate)")
+            
+            await onEventCreated()
+            dismiss()
+        } catch {
+            print("❌ Failed to create event: \(error)")
+            // TODO: Ajouter une alerte d'erreur
+        }
     }
 }
 
